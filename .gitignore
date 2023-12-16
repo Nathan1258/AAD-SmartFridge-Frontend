@@ -1,1 +1,6 @@
 node_modules
+.idea
+.env
+.run
+qodana.yaml
+.DS_Store
