@@ -1,33 +1,37 @@
+import React, {useEffect} from "react";
 import styled from "styled-components";
-import {useEffect} from "react";
+import {Route, BrowserRouter as Router, Routes} from "react-router-dom";
 import WebFont from "webfontloader";
+import {Home} from "./Home";
+import {NoMatch} from "./NoMatch";
+import {Login} from "./Login";
 
-const AppContainer = styled.div
-`
-  display: flex;
-  height: 100vh;
-  font-family: 'Roboto';
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+
+const AppContainer = styled.div`
+    margin: 0;
+    font-family: 'Roboto';
 `;
 
-const Title = styled.h1``;
-
-
 function App() {
+  useEffect(() => {
+      // This will run when the site is loaded
 
-     useEffect(() => {
-   WebFont.load({
-     google: {
-       families: ['Roboto']
-     }
-   });
+    WebFont.load({
+      google: {
+        families: ['Roboto']
+      }
+    });
   }, []);
 
   return (
       <AppContainer>
-          <Title>Smart Fridge</Title>
+        <Router>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/Login" element={<Login />} />
+                <Route path="*" element={<NoMatch />} />
+            </Routes>
+        </Router>
       </AppContainer>
   );
 }
