@@ -1,0 +1,63 @@
+body {
+    background-image: url(../res/background.jpeg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0;
+    height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+    color: #eeeeee;
+
+}
+
+#logo{
+ height: 100px;
+ width: 100px;
+ margin-left: 80px;
+ margin-top: 40px;
+}
+
+hr{
+    width: 515px;
+    text-align: center;
+}
+
+h1{
+margin-top: 35vh;
+margin-bottom: 0px;
+padding: 0px;
+font-size: 60px;
+color: #eeeeee;
+text-align: center;
+}
+
+#description{
+    font-size: large;
+    text-align: center;
+}
+
+
+.login_button{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    color: #eeeeee;
+    font-size: 20px;
+    width: 150px;
+    height: 40px;
+    border-style: none;
+    border-radius: 4px;
+    border-width: 1px;
+    margin-top: 40px;
+    background: none;
+}
+
+
+#login_icon{
+    width: 25px;
+    height: 25px;
+}
+
