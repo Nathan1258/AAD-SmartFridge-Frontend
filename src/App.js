@@ -4,35 +4,39 @@ import {Route, BrowserRouter as Router, Routes} from "react-router-dom";
 import WebFont from "webfontloader";
 import {Home} from "./Home";
 import {NoMatch} from "./NoMatch";
-import {Login} from "./Login";
+import {ClockIn} from "./ClockIn";
+import {PopupProvider, usePopup} from "./Popup/popupContext";
+import Popup from "./Popup/popup";
 
 
 const AppContainer = styled.div`
     margin: 0;
-    font-family: 'Roboto';
+    font-family: 'Rubik';
 `;
 
 function App() {
   useEffect(() => {
       // This will run when the site is loaded
-
     WebFont.load({
       google: {
-        families: ['Roboto']
+        families: ['Rubik']
       }
     });
   }, []);
 
   return (
-      <AppContainer>
+    <PopupProvider>
+        <AppContainer>
+            <Popup />
         <Router>
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/Login" element={<Login />} />
+                <Route path="/clock-in" element={<ClockIn />} />
                 <Route path="*" element={<NoMatch />} />
             </Routes>
         </Router>
-      </AppContainer>
+        </AppContainer>
+    </PopupProvider>
   );
 }
 
