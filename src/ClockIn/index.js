@@ -83,9 +83,9 @@ export function ClockIn(props){
                     <Subtitle>Enter your user number and password</Subtitle>
                 <Line />
             </SubtitleWrapper>
-            <Input width={"20%"} name="userNumber" value={userNumber} setValue={setUserNumber} placeholder={"User Number"}/>
-            <Input width={"20%"} name="password" value={password} setValue={setPassword} placeholder={"Password"}/>
-            <Button width={"25%"} height={"50px"} onClick={handleClick}>Clock In</Button>
+            <Input width={"200px"} name="userNumber" value={userNumber} setValue={setUserNumber} placeholder={"User Number"}/>
+            <Input width={"200px"} name="password" value={password} setValue={setPassword} placeholder={"Password"}/>
+            <Button width={"150px"} height={"50px"} onClick={handleClick}>Clock In</Button>
         </HomeWrapper>
     )
 }

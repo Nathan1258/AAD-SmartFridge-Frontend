@@ -18,6 +18,7 @@ const HomeWrapper = styled.div`
 
 const Title = styled.h1`
     margin: 0;
+    text-align: center;
     font-size: 5rem;
     color: white;
 `;
@@ -25,6 +26,7 @@ const Title = styled.h1`
 const SubtitleWrapper = styled.div`
     display: flex;
     align-items: center;
+    text-align: center;
     justify-content: center;
     flex-direction: row;
     width: 100%;
@@ -63,7 +65,7 @@ export function Home(props){
                     <Subtitle>Eating done smarter</Subtitle>
                 <Line />
             </SubtitleWrapper>
-            <Button width={"15%"} height={"50px"} onClick={handleClick}>Clock In</Button>
+            <Button width={"150px"} height={"50px"} onClick={handleClick}>Clock In</Button>
         </HomeWrapper>
     )
 }
