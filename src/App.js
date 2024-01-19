@@ -5,6 +5,7 @@ import WebFont from "webfontloader";
 import {Home} from "./Home";
 import {NoMatch} from "./NoMatch";
 import {ClockIn} from "./ClockIn";
+import {Dashboard} from "./Dashboard";
 import {PopupProvider, usePopup} from "./Popup/popupContext";
 import Popup from "./Popup/popup";
 
@@ -31,6 +32,7 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="dashboard" element={<Dashboard/>}/>
                 <Route path="/clock-in" element={<ClockIn />} />
                 <Route path="*" element={<NoMatch />} />
             </Routes>
