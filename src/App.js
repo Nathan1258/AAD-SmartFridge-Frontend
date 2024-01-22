@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route, useLocation, useNavigate} from "react-router-dom";
 import WebFont from "webfontloader";
 import { Home } from "./Home";
 import { NoMatch } from "./NoMatch";
 import { ClockIn } from "./ClockIn";
 import { Dashboard } from "./Dashboard";
-import { PopupProvider } from "./Popup/popupContext";
+import {PopupProvider, usePopup} from "./Popup/popupContext";
 import Popup from "./Popup/popup";
 import { Inventory } from "./Inventory";
 import { NavBar } from "./NavBar";
@@ -67,6 +67,18 @@ function Layout({ children }) {
   );
 }
 
+const Redirect = () => {
+  const navigate = useNavigate();
+  const currentLocation = useLocation();
+  useEffect(() => {
+    if (!hasAccessPIN()) {
+      navigate('/clock-in', { state: { showPopup: true, from: currentLocation.pathname} });
+    }
+  }, [navigate]);
+
+  return null;
+};
+
 function App() {
   useEffect(() => {
     WebFont.load({
@@ -75,10 +87,10 @@ function App() {
       }
     });
   }, []);
-
   return (
     <PopupProvider>
       <AppContainer>
+        <Popup/>
         <Router>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -86,6 +98,8 @@ function App() {
             <Route
               path="*"
               element={
+              <>
+                <Redirect/>
                 <Layout>
                   <MainContentContainer>
                     <Routes>
@@ -95,6 +109,7 @@ function App() {
                     </Routes>
                   </MainContentContainer>
                 </Layout>
+                </>
               }
             />
           </Routes>
@@ -103,5 +118,10 @@ function App() {
     </PopupProvider>
   );
 }
+
+function hasAccessPIN() {
+  return document.cookie.split(';').some((item) => item.trim().startsWith('accessPIN='));
+}
+
 
 export default App;

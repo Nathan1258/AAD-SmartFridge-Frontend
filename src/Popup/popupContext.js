@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, {createContext, useState, useContext, useCallback} from 'react';
 
 const PopupContext = createContext();
 
@@ -12,9 +12,9 @@ export const PopupProvider = ({ children }) => {
 
    const clearPopup = () => setPopupData({ title: '', message: '', buttonText: 'Okay', onButtonClick: () => {} });
 
-   const triggerPopup = (title, message, buttonText = 'Okay', onButtonClick = clearPopup) => {
-       setPopupData({ title, message, buttonText, onButtonClick });
-   };
+   const triggerPopup = useCallback((title, message, buttonText = 'Okay', onButtonClick = () => {}) => {
+      setPopupData({ title, message, buttonText, onButtonClick });
+  }, []);
 
    return (
      <PopupContext.Provider value={{ popupData, triggerPopup, clearPopup }}>
