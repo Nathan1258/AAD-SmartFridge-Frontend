@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import {useEffect, useState} from "react";
 import Clock from "react-clock";
+import {useNavigate} from "react-router-dom";
 
 const SideBarWrapper = styled.div`
 `;
@@ -44,6 +45,7 @@ const NavigationLinks = styled.div`
 
 export function SideBar(props) {
     const [value, setValue] = useState(new Date());
+    const navigate = useNavigate();
 
     useEffect(() => {
     const interval = setInterval(() => setValue(new Date()), 1000);
@@ -53,6 +55,13 @@ export function SideBar(props) {
         };
     }, []);
 
+    function handleClick(page) {
+        navigate(page);
+    }
+    function logout(){
+        alert("Logging out")
+    }
+
 
     return (
         <SideBarWrapper>
@@ -61,10 +70,10 @@ export function SideBar(props) {
                 <UserBoxAccess>Admin</UserBoxAccess>
             </UserBox>
             <NavigationLinks>
-                <SideBarLink>Inventory</SideBarLink>
-                <SideBarLink>Permissions</SideBarLink>
-                <SideBarLink>Order Management</SideBarLink>
-                <SideBarLink>Log out</SideBarLink>
+                <SideBarLink onClick={() => handleClick("/dashboard")}>Dashboard</SideBarLink>
+                <SideBarLink onClick={() => handleClick("/inventory")}>Inventory</SideBarLink>
+                <SideBarLink onClick={() => handleClick("/order-management")}>Order Management</SideBarLink>
+                <SideBarLink onClick={() => logout()}>Log out</SideBarLink>
 
             </NavigationLinks>
         </SideBarWrapper>
