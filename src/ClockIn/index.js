@@ -94,7 +94,7 @@ export function ClockIn(props){
     .then(data => {
         if(data.code != 200) return triggerPopup("Ooops...", "Your user number or password is wrong. Please try again.", "Okay");
         document.cookie = "accessPIN=" + data.data.accessPIN + ";path=/";
-        if(location.state?.showPopup)
+        // if(location.state?.showPopup)
         triggerPopup("Clocked in", "You've successfully clocked in. Your PIN for the day is: " + data.data.accessPIN, "Okay", () => redirectBack())
     }).catch(error => console.error('Error:', error));
     }
