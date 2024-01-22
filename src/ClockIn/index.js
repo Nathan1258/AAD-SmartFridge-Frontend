@@ -14,7 +14,6 @@ const HomeWrapper = styled.div`
     height: 100vh;
     width: 100%;
     margin: 0;
-    background-image: linear-gradient(#10002b, #e0aaff);
     background-size: cover;
     background-repeat: no-repeat;
 `
