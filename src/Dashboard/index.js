@@ -5,10 +5,7 @@ const DashboardWrapper = styled.div`
     display: flex;
     height: 100vh;
     width: 100%;
-    background: gray;
     margin: 0;
-    background-size: cover;
-    background-repeat: no-repeat;
 `
 
 const Title = styled.h1`
