@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import {useEffect, useState} from "react";
-import Clock from "react-clock";
 import {useNavigate} from "react-router-dom";
+import {useUser} from "../UserContext";
+
 
 const SideBarWrapper = styled.div`
 `;
@@ -44,38 +45,40 @@ const NavigationLinks = styled.div`
 
 
 export function SideBar(props) {
-    const [value, setValue] = useState(new Date());
-    const navigate = useNavigate();
+  const { userData, fetchUserData, resetUserData  }  = useUser();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-    const interval = setInterval(() => setValue(new Date()), 1000);
+  const name = userData ? userData.first_name + " " + userData.last_name : "";
+  const access = userData ? userData.access[0].toUpperCase() + userData.access.substring(1) : "";
+  const isLoading = userData === null;
+  fetchUserData();
+  function handleClick(page) {
+    navigate(page);
+  }
+  function logout() {
+    document.cookie = `accessPIN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    resetUserData();
+    navigate('clock-in');
+  }
 
-    return () => {
-      clearInterval(interval);
-        };
-    }, []);
-
-    function handleClick(page) {
-        navigate(page);
-    }
-    function logout(){
-        alert("Logging out")
-    }
-
-
-    return (
-        <SideBarWrapper>
-            <UserBox>
-                <UserBoxName>Nathan Ellis</UserBoxName>
-                <UserBoxAccess>Admin</UserBoxAccess>
-            </UserBox>
-            <NavigationLinks>
-                <SideBarLink onClick={() => handleClick("/dashboard")}>Dashboard</SideBarLink>
-                <SideBarLink onClick={() => handleClick("/inventory")}>Inventory</SideBarLink>
-                <SideBarLink onClick={() => handleClick("/order-management")}>Order Management</SideBarLink>
-                <SideBarLink onClick={() => logout()}>Log out</SideBarLink>
-
-            </NavigationLinks>
-        </SideBarWrapper>
-    );
+  return (
+    <SideBarWrapper>
+      <UserBox>
+        {isLoading ? (
+          <UserBoxName>Loading...</UserBoxName>
+        ) : (
+          <>
+            <UserBoxName>{name}</UserBoxName>
+            <UserBoxAccess>{access[0].toUpperCase() + access.substring(1)}</UserBoxAccess>
+          </>
+        )}
+      </UserBox>
+      <NavigationLinks>
+        <SideBarLink onClick={() => handleClick("/dashboard")}>Dashboard</SideBarLink>
+        <SideBarLink onClick={() => handleClick("/inventory")}>Inventory</SideBarLink>
+        <SideBarLink onClick={() => handleClick("/order-management")}>Order Management</SideBarLink>
+        <SideBarLink onClick={() => logout()}>Log out</SideBarLink>
+      </NavigationLinks>
+    </SideBarWrapper>
+  );
 }

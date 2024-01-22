@@ -11,6 +11,7 @@ import Popup from "./Popup/popup";
 import { Inventory } from "./Inventory";
 import { NavBar } from "./NavBar";
 import { SideBar } from "./SideBar";
+import {UserProvider} from "./UserContext";
 
 const AppContainer = styled.div`
   display: flex;
@@ -70,11 +71,17 @@ function Layout({ children }) {
 const Redirect = () => {
   const navigate = useNavigate();
   const currentLocation = useLocation();
-  useEffect(() => {
-    if (!hasAccessPIN()) {
+
+  const checkAccess = async () => {
+    const hasAccess = await hasAccessPIN();
+    if (!hasAccess) {
       navigate('/clock-in', { state: { showPopup: true, from: currentLocation.pathname} });
     }
-  }, [navigate]);
+  };
+
+  useEffect(() => {
+    checkAccess();
+  }, [navigate, currentLocation]);
 
   return null;
 };
@@ -89,38 +96,60 @@ function App() {
   }, []);
   return (
     <PopupProvider>
-      <AppContainer>
-        <Popup/>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/clock-in" element={<ClockIn />} />
-            <Route
-              path="*"
-              element={
-              <>
-                <Redirect/>
-                <Layout>
-                  <MainContentContainer>
-                    <Routes>
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/inventory" element={<Inventory />} />
-                      <Route path="*" element={<NoMatch />} />
-                    </Routes>
-                  </MainContentContainer>
-                </Layout>
-                </>
-              }
-            />
-          </Routes>
-        </Router>
-      </AppContainer>
+      <UserProvider>
+        <AppContainer>
+          <Popup/>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/clock-in" element={<ClockIn />} />
+              <Route
+                path="*"
+                element={
+                <>
+                  <Redirect/>
+                  <Layout>
+                    <MainContentContainer>
+                      <Routes>
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/inventory" element={<Inventory />} />
+                        <Route path="*" element={<NoMatch />} />
+                      </Routes>
+                    </MainContentContainer>
+                  </Layout>
+                  </>
+                }
+              />
+            </Routes>
+          </Router>
+        </AppContainer>
+      </UserProvider>
     </PopupProvider>
   );
 }
 
-function hasAccessPIN() {
-  return document.cookie.split(';').some((item) => item.trim().startsWith('accessPIN='));
+async function hasAccessPIN() {
+  const cookies = document.cookie.split(';');
+  for (const cookie of cookies) {
+    const [cookieName, cookieValue] = cookie.trim().split('=');
+    if (cookieName === 'accessPIN') {
+      try {
+        const response = await fetch("https://aad-api.ellisn.com/v1/users/verifyAccessToken", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ "accessPIN": cookieValue })
+        });
+        const data = await response.json();
+        return data.code === 200;
+      } catch (error) {
+        console.error(error)
+        return false;
+      }
+    }
+  }
+  return false;
 }
 
 

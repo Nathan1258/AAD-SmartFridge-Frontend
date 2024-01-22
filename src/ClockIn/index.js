@@ -4,6 +4,7 @@ import Button from "../ReuseableComponents/Button"
 import Input from "../ReuseableComponents/Input";
 import {useEffect, useState} from "react";
 import {usePopup} from "../Popup/popupContext";
+import {useUser} from "../UserContext";
 
 
 const HomeWrapper = styled.div`
@@ -56,6 +57,7 @@ const Subtitle = styled.h2`
 export function ClockIn(props){
 
     const location = useLocation();
+    const {fetchUserData} = useUser();
     const navigate = useNavigate();
     const {triggerPopup} = usePopup();
 
@@ -107,7 +109,7 @@ export function ClockIn(props){
     })
     .then(response => response.json())
     .then(data => {
-        if(data.code != 200) return triggerPopup("Ooops...", "Your accessPIN is wrong. Please try again.", "Okay");
+        if(data.code != 200) return triggerPopup("Ooops...", "Your accessPIN is wrong or has expired. Please try again.", "Okay");
         document.cookie = "accessPIN=" + accessPIN + ";path=/";
         triggerPopup("Clocked in", "You've successfully logged in.", "Okay", () => redirectBack());
     }).catch(error => console.error('Error:', error));

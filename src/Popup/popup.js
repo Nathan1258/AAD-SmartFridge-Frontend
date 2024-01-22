@@ -37,7 +37,7 @@ const Popup = () => {
     <StyledPopup>
         <Title>{popupData.title}</Title>
         <Message>{popupData.message}</Message>
-        <Button onClick={handleButtonClick} backgroundColor={"black"} color={"white"}>{popupData.buttonText}</Button>
+        <Button onClick={handleButtonClick} backgroundcolor={"black"} color={"white"}>{popupData.buttonText}</Button>
     </StyledPopup>
   ) : null;
 }
