@@ -27,7 +27,7 @@ export function Inventory(props){
     return (
         <InventoryWrapper>
             <Title>Inventory</Title>
-            <SubTitle>Manage and view Inventory Stock</SubTitle>
+            <SubTitle>Manage and View Inventory Stock</SubTitle>
         </InventoryWrapper>
     )
 }

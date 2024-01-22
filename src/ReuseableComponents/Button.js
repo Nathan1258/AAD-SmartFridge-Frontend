@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 const StyledButton = styled.button`
-    background-color: white;
-    color: black;
+    background-color: ${props => props.backgroundColor || 'white'};
+    color: ${props => props.color || 'black'};
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
@@ -24,9 +24,9 @@ const StyledButton = styled.button`
     }
 `;
 
-const Button = ({ children, onClick, width, height }) => {
+const Button = ({ children, onClick, width, height, color, backgroundColor }) => {
   return (
-    <StyledButton onClick={onClick} width={width} height={height}>
+    <StyledButton onClick={onClick} width={width} height={height} color={color} backgroundColor={backgroundColor}>
       {children}
     </StyledButton>
   );
