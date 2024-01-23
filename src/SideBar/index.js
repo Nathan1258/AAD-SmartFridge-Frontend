@@ -57,7 +57,12 @@ export function SideBar(props) {
   const name = userData ? userData.first_name + " " + userData.last_name : "";
   const access = userData ? userData.access[0].toUpperCase() + userData.access.substring(1) : "";
   const isLoading = userData === null;
-  fetchUserData();
+
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   function handleClick(page) {
     navigate(page);
   }

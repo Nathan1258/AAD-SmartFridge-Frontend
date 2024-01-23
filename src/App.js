@@ -12,6 +12,7 @@ import { Inventory } from "./Inventory";
 import { NavBar } from "./NavBar";
 import { SideBar } from "./SideBar";
 import {UserProvider} from "./UserContext";
+import {hasAccessPIN} from "./Utils";
 
 const AppContainer = styled.div`
   display: flex;
@@ -126,30 +127,6 @@ function App() {
       </UserProvider>
     </PopupProvider>
   );
-}
-
-async function hasAccessPIN() {
-  const cookies = document.cookie.split(';');
-  for (const cookie of cookies) {
-    const [cookieName, cookieValue] = cookie.trim().split('=');
-    if (cookieName === 'accessPIN') {
-      try {
-        const response = await fetch("https://aad-api.ellisn.com/v1/users/verifyAccessToken", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ "accessPIN": cookieValue })
-        });
-        const data = await response.json();
-        return data.code === 200;
-      } catch (error) {
-        console.error(error)
-        return false;
-      }
-    }
-  }
-  return false;
 }
 
 

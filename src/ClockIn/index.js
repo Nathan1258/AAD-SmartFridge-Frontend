@@ -5,6 +5,7 @@ import Input from "../ReuseableComponents/Input";
 import {useEffect, useState} from "react";
 import {usePopup} from "../Popup/popupContext";
 import {useUser} from "../UserContext";
+import {clockIn, verifyPIN} from "../API";
 
 
 const HomeWrapper = styled.div`
@@ -57,7 +58,6 @@ const Subtitle = styled.h2`
 export function ClockIn(props){
 
     const location = useLocation();
-    const {fetchUserData} = useUser();
     const navigate = useNavigate();
     const {triggerPopup} = usePopup();
 
@@ -83,37 +83,27 @@ export function ClockIn(props){
     };
 
     function handleClockIn() {
-        fetch("https://aad-api.ellisn.com/v1/users/clock-in", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ "uid": userNumber, "password": password })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.code != 200) return triggerPopup("Ooops...", "Your user number or password is wrong. Please try again.", "Okay");
-        document.cookie = "accessPIN=" + data.data.accessPIN + ";path=/";
-        // if(location.state?.showPopup)
-        triggerPopup("Clocked in", "You've successfully clocked in. Your PIN for the day is: " + data.data.accessPIN, "Okay", () => redirectBack())
-    }).catch(error => console.error('Error:', error));
+        clockIn(userNumber, password)
+            .then(accessPIN => {
+                document.cookie = "accessPIN=" + accessPIN + ";path=/";
+                triggerPopup("Clocked in", "You've successfully clocked in. Your PIN for the day is: " + accessPIN, "Okay", () => redirectBack());
+            })
+            .catch(errorMessage => {
+                triggerPopup("Ooops...", errorMessage, "Okay");
+            });
     }
 
     function handleLogIn(){
-        fetch("https://aad-api.ellisn.com/v1/users/verifyAccessToken", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ "accessPIN": accessPIN})
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.code != 200) return triggerPopup("Ooops...", "Your accessPIN is wrong or has expired. Please try again.", "Okay");
-        document.cookie = "accessPIN=" + accessPIN + ";path=/";
-        redirectBack();
-        // triggerPopup("Clocked in", "You've successfully logged in.", "Okay", () => redirectBack());
-    }).catch(error => console.error('Error:', error));
+        console.log("Logging in...");
+        verifyPIN(accessPIN)
+            .then(validatedPIN => {
+                console.log(validatedPIN);
+                document.cookie = "accessPIN=" + validatedPIN + ";path=/";
+                redirectBack();
+            })
+            .catch(errorMessage => {
+                triggerPopup("Ooops...", errorMessage, "Okay");
+            });
     }
 
     return (

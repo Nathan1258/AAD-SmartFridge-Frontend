@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { getUserDetails } from "./API";
+import {getAccessPIN} from "./Utils";
 
 const UserContext = createContext();
 
@@ -9,51 +11,33 @@ export function UserProvider({ children }) {
     setUserData(null);
   };
 
-  const fetchUserData = async() => {
-
-      if(getAccessPIN() != "") {
-        try {
-          const response = await fetch("https://aad-api.ellisn.com/v1/users/details", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({"accessPIN": getAccessPIN()})
-          });
-          if (!response.ok) throw new Error("Failed to fetch user data");
-          const fetchedUserData = await response.json();
-          setUserData(fetchedUserData.data);
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
+  const fetchUserData = async () => {
+    const accessPIN = getAccessPIN();
+    if (accessPIN) {
+      try {
+        const data = await getUserDetails(accessPIN);
+        setUserData(data);
+      } catch (error) {
+        console.error(error);
+        document.cookie = `accessPIN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        resetUserData();
       }
     }
+  };
 
   useEffect(() => {
     if (!userData) {
       fetchUserData();
     }
-  },[userData]);
+  }, []); // Dependencies array is empty, this runs once after component mounts
 
- return (
+  return (
     <UserContext.Provider value={{ userData, resetUserData, fetchUserData }}>
       {children}
     </UserContext.Provider>
   );
 }
 
-function getAccessPIN() {
-  const cookies = document.cookie.split(';');
-  for (const cookie of cookies) {
-    const [cookieName, cookieValue] = cookie.trim().split('=');
-    if (cookieName === 'accessPIN') {
-      return cookieValue;
-    }
-  }
-  return "";
-}
-
 export function useUser() {
   return useContext(UserContext);
 }
-
