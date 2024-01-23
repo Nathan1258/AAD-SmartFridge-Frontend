@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useUser} from "../UserContext";
 
 
@@ -11,11 +11,16 @@ const SideBarLink = styled.h2`
     color: white;
     padding: 10px;
     cursor: pointer;
-    
-    &:hover{
-         background: rgba(255, 255, 255, 0.125);
-         padding: 10px;
-         border-radius: 10px;
+    transition: transform 250ms;
+    background: ${props => props.current ? "rgba(255, 255, 255, 0.125)" : "none"};
+    border-radius: ${props => props.current ? "10px" : "0"};
+
+    &:hover {
+        transform: scale(1.05);
+    }
+    &:hover::after{
+        transition: transform 250ms;
+        transform: scale(1);
     }
 `;
 
@@ -25,7 +30,7 @@ const UserBox = styled.div`
     background: rgba(255, 255, 255, 0.125);
     border-radius: 10px; 
     padding: 15px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); 
     backdrop-filter: blur(5px); 
     margin-bottom: 20px;
 `;
@@ -46,6 +51,7 @@ const NavigationLinks = styled.div`
 
 export function SideBar(props) {
   const { userData, fetchUserData, resetUserData  }  = useUser();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const name = userData ? userData.first_name + " " + userData.last_name : "";
@@ -74,10 +80,10 @@ export function SideBar(props) {
         )}
       </UserBox>
       <NavigationLinks>
-        <SideBarLink onClick={() => handleClick("/dashboard")}>Dashboard</SideBarLink>
-        <SideBarLink onClick={() => handleClick("/inventory")}>Inventory</SideBarLink>
-        <SideBarLink onClick={() => handleClick("/order-management")}>Order Management</SideBarLink>
-        <SideBarLink onClick={() => logout()}>Log out</SideBarLink>
+        <SideBarLink current={location.pathname === "/dashboard"} onClick={() => handleClick("/dashboard")}>Dashboard</SideBarLink>
+        <SideBarLink current={location.pathname === "/inventory"} onClick={() => handleClick("/inventory")}>Inventory</SideBarLink>
+        <SideBarLink current={location.pathname === "/order-management"} onClick={() => handleClick("/order-management")}>Order Management</SideBarLink>
+        <SideBarLink current={location.pathname === "/logout"} onClick={() => logout()}>Log out</SideBarLink>
       </NavigationLinks>
     </SideBarWrapper>
   );
