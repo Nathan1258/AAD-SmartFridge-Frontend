@@ -19,6 +19,7 @@ import { NavBar } from "./NavBar";
 import { SideBar } from "./SideBar";
 import { UserProvider } from "./UserContext";
 import { hasAccessPIN } from "./Utils";
+import { Fridge } from "./Fridge";
 
 const AppContainer = styled.div`
   display: flex;
@@ -125,6 +126,7 @@ function App() {
                         <Routes>
                           <Route path="/dashboard" element={<Dashboard />} />
                           <Route path="/inventory" element={<Inventory />} />
+                          <Route path="/fridge" element={<Fridge />} />
                           <Route path="*" element={<NoMatch />} />
                         </Routes>
                       </MainContentContainer>

@@ -94,6 +94,12 @@ export function SideBar(props) {
           Inventory
         </SideBarLink>
         <SideBarLink
+          current={location.pathname === "/fridge"}
+          onClick={() => handleClick("/fridge")}
+        >
+          Access Fridge
+        </SideBarLink>
+        <SideBarLink
           current={location.pathname === "/order-management"}
           onClick={() => handleClick("/order-management")}
         >
