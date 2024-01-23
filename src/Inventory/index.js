@@ -112,6 +112,10 @@ export function Inventory(props){
     }, []);
 
     useEffect(() => {
+        setLastClickedHeader("name");
+    }, []);
+
+    useEffect(() => {
     const filtered = items.filter((item) =>
       item.Name.toLowerCase().includes(productSearchQuery.toLowerCase())
     );
