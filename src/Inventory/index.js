@@ -53,7 +53,7 @@ const Table = styled.table`
   }
 
   th {
-    background: rgba(255, 255, 255, 0.125);
+    background: #2c3f56;
     color: white;
     cursor: pointer;
   }
