@@ -61,12 +61,6 @@ export function SideBar(props) {
   function handleClick(page) {
     navigate(page);
   }
-  function logout() {
-    document.cookie = `accessPIN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    resetUserData();
-    navigate('clock-in');
-  }
-
   return (
     <SideBarWrapper>
       <UserBox>
@@ -83,7 +77,6 @@ export function SideBar(props) {
         <SideBarLink current={location.pathname === "/dashboard"} onClick={() => handleClick("/dashboard")}>Dashboard</SideBarLink>
         <SideBarLink current={location.pathname === "/inventory"} onClick={() => handleClick("/inventory")}>Inventory</SideBarLink>
         <SideBarLink current={location.pathname === "/order-management"} onClick={() => handleClick("/order-management")}>Order Management</SideBarLink>
-        <SideBarLink current={location.pathname === "/logout"} onClick={() => logout()}>Log out</SideBarLink>
       </NavigationLinks>
     </SideBarWrapper>
   );

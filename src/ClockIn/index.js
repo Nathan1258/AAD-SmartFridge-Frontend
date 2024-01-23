@@ -111,7 +111,8 @@ export function ClockIn(props){
     .then(data => {
         if(data.code != 200) return triggerPopup("Ooops...", "Your accessPIN is wrong or has expired. Please try again.", "Okay");
         document.cookie = "accessPIN=" + accessPIN + ";path=/";
-        triggerPopup("Clocked in", "You've successfully logged in.", "Okay", () => redirectBack());
+        redirectBack();
+        // triggerPopup("Clocked in", "You've successfully logged in.", "Okay", () => redirectBack());
     }).catch(error => console.error('Error:', error));
     }
 
