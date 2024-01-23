@@ -1,26 +1,32 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import {BrowserRouter as Router, Routes, Route, useLocation, useNavigate} from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import WebFont from "webfontloader";
 import { Home } from "./Home";
 import { NoMatch } from "./NoMatch";
 import { ClockIn } from "./ClockIn";
 import { Dashboard } from "./Dashboard";
-import {PopupProvider, usePopup} from "./Popup/popupContext";
+import { PopupProvider, usePopup } from "./Popup/popupContext";
 import Popup from "./Popup/popup";
 import { Inventory } from "./Inventory";
 import { NavBar } from "./NavBar";
 import { SideBar } from "./SideBar";
-import {UserProvider} from "./UserContext";
-import {hasAccessPIN} from "./Utils";
+import { UserProvider } from "./UserContext";
+import { hasAccessPIN } from "./Utils";
 
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0;
   height: 100%;
-  font-family: 'Rubik';
-  background-image: linear-gradient(#0b132b, #1c2541, #00194A, #3a506b);
+  font-family: "Rubik";
+  background-image: linear-gradient(#0b132b, #1c2541, #00194a, #3a506b);
 `;
 
 const NavBarContainer = styled.div`
@@ -29,6 +35,7 @@ const NavBarContainer = styled.div`
   left: 0;
   right: 0;
   height: 10%;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 `;
 
 const SideBarAndContentContainer = styled.div`
@@ -44,6 +51,8 @@ const SideBarContainer = styled.div`
   flex-direction: row;
   height: auto;
   width: auto;
+  padding: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 `;
 
 const MainContentContainer = styled.div`
@@ -76,7 +85,9 @@ const Redirect = () => {
   const checkAccess = async () => {
     const hasAccess = await hasAccessPIN();
     if (!hasAccess) {
-      navigate('/clock-in', { state: { showPopup: true, from: currentLocation.pathname} });
+      navigate("/clock-in", {
+        state: { showPopup: true, from: currentLocation.pathname },
+      });
     }
   };
 
@@ -91,15 +102,15 @@ function App() {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ['Rubik']
-      }
+        families: ["Rubik"],
+      },
     });
   }, []);
   return (
     <PopupProvider>
       <UserProvider>
         <AppContainer>
-          <Popup/>
+          <Popup />
           <Router>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -107,17 +118,17 @@ function App() {
               <Route
                 path="*"
                 element={
-                <>
-                  <Redirect/>
-                  <Layout>
-                    <MainContentContainer>
-                      <Routes>
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/inventory" element={<Inventory />} />
-                        <Route path="*" element={<NoMatch />} />
-                      </Routes>
-                    </MainContentContainer>
-                  </Layout>
+                  <>
+                    <Redirect />
+                    <Layout>
+                      <MainContentContainer>
+                        <Routes>
+                          <Route path="/dashboard" element={<Dashboard />} />
+                          <Route path="/inventory" element={<Inventory />} />
+                          <Route path="*" element={<NoMatch />} />
+                        </Routes>
+                      </MainContentContainer>
+                    </Layout>
                   </>
                 }
               />
@@ -128,6 +139,5 @@ function App() {
     </PopupProvider>
   );
 }
-
 
 export default App;
