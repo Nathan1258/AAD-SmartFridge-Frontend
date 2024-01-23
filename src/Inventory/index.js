@@ -197,6 +197,7 @@ export function Inventory(props) {
   const [selectedView, setSelectedView] = useState("All items");
 
   useEffect(() => {
+    setIsLoading(true);
     if (selectedView === "All items") {
       getAllItems()
         .then((items) => {
