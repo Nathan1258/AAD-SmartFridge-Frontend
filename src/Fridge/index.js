@@ -54,7 +54,7 @@ display: flex;
 justify-content: center;
 `
 const Overlay = styled.div`
-  display: ${props => (props.buttonState ? 'block' : 'none')};
+  display: ${props => (props.overlayState ? 'block' : 'none')};
   position: fixed;
   top: 0;
   left: 0;
@@ -65,7 +65,7 @@ const Overlay = styled.div`
 `;
 
 const AddDiv = styled.div`
-  display: ${props => props.buttonState ? 'flex' : 'none'};
+  display: ${props => props.addButtonState ? 'flex' : 'none'};
   flex-direction: column;
   width: 600px;
   height: 400px;
@@ -79,6 +79,24 @@ const AddDiv = styled.div`
 
   
 `;
+
+const RemoveDiv = styled.div`
+  display: ${props => props.removeButtonState ? 'flex' : 'none'};
+  flex-direction: column;
+  width: 600px;
+  height: 400px;
+  background-color: #29323f;
+  position: absolute;
+  top: 100px;
+  align-self: center;
+  z-index: 999;
+  border-radius: 10px;
+  padding: 15px;
+
+  
+`;
+
+
 
 const Form = styled.form`
   
@@ -111,7 +129,7 @@ label {
 `;
 
 
-function MyForm() {
+function ItemForm() {
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
@@ -148,36 +166,56 @@ function MyForm() {
 
 
 //Add Items Pop Up 
-const AddComponent = ({ buttonState, AddButton }) => (
+const AddComponent = ({ addButtonState, AddButton, overlayState }) => (
     
     <>
-    <Overlay buttonState={buttonState}></Overlay>
-    <AddDiv buttonState={buttonState}>
+    <Overlay overlayState={overlayState}></Overlay>
+    <AddDiv addButtonState={addButtonState}>
         <Button alignSelf={"flex-end"} width={"90px"} onClick={AddButton} >Close</Button>
-        <MyForm></MyForm>
+        <ItemForm/>
         <Button alignSelf={"center"} width={"140px"} backgroundcolor={"#61ff69"}>Add Item</Button>
     </AddDiv>
     </>
     
 );
 
-export function Fridge() {
-  const [buttonState, setState] = useState(false);
+// Remove Items
+const RemoveComponent = ({ removeButtonState, RemoveButton , overlayState }) => (
+    
+  <>
+  <Overlay overlayState={overlayState}></Overlay>
+  <RemoveDiv removeButtonState={removeButtonState}>
+      <Button alignSelf={"flex-end"} width={"90px"} onClick={RemoveButton} >Close</Button>
+      <Button alignSelf={"center"} width={"140px"} backgroundcolor={"#ff6961"}>Remove Item</Button>
+  </RemoveDiv>
+  </>
+  
+);
 
+
+
+export function Fridge() {
+  const [addButtonState, setState] = useState(false);
+  const [removeButtonState, setRemoveState] = useState(false);
+  const [overlayState, setOverlay] = useState(false);
 
   function AddButton() {
-    setState(!buttonState);
+    setState(!addButtonState);
+    setOverlay(!overlayState);
   }
 
-  function RemoveButton(){
-    
+  function RemoveButton() {
+    setRemoveState(!removeButtonState);
+    setOverlay(!overlayState);
   }
+
 
   return (
     <FridgeWrapper>
       <Title>Access Fridge</Title>
       <SubTitle>Manage Items in Fridge</SubTitle>
-      <AddComponent buttonState={buttonState} AddButton={AddButton} />
+      <AddComponent addButtonState={addButtonState} AddButton={AddButton} overlayState={overlayState} />
+      <RemoveComponent removeButtonState={removeButtonState} RemoveButton={RemoveButton}></RemoveComponent>
       <TableWrapper>
         <Table>
           <thead>
@@ -198,7 +236,7 @@ export function Fridge() {
       </TableWrapper>
       <ButtonWrapper>
         <Button width={"140px"} backgroundcolor={"#61ff69"} onClick={AddButton}>Add Item</Button>
-        <Button width={"140px"} backgroundcolor={"#ff6961"}>Remove Item</Button>
+        <Button width={"140px"} backgroundcolor={"#ff6961"} onClick={RemoveButton}>Remove Item</Button>
       </ButtonWrapper>
     </FridgeWrapper>
   );
