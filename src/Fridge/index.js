@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import Button from "../ReuseableComponents/Button";
+import {useState} from "react";
+import css from "styled-components";
 
 const FridgeWrapper = styled.div`
   display: flex;
@@ -7,6 +9,7 @@ const FridgeWrapper = styled.div`
   height: 100vh;
   width: 100%;
   margin: 0;
+  position: relative;§
 `;
 
 const Title = styled.h1`
@@ -48,40 +51,77 @@ const Td = styled.td`
 const ButtonWrapper = styled.div`
 display: flex;
 justify-content: center;
+`
+const Overlay = styled.div`
+  display: ${props => (props.buttonState ? 'block' : 'none')};
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); 
+  z-index: 998; 
 `;
 
+const AddDiv = styled.div`
+  display: ${props => props.buttonState ? 'flex' : 'none'};
+  width: 600px;
+  height: 400px;
+  background-color: lightblue;
+  position: absolute;
+  top: 100px;
+  align-self: center;
+  z-index: 999;
+  border-radius: 10px;
+  
+`;
 
+//Add Items Pop Up 
+const AddComponent = ({ buttonState, AddButton }) => (
+    
+    <>
+    <Overlay buttonState={buttonState}></Overlay>
+    <AddDiv buttonState={buttonState}>
 
+    </AddDiv>
+    </>
+    
+);
 
 export function Fridge() {
+  const [buttonState, setState] = useState(false);
 
+  function AddButton() {
+    setState(!buttonState);
+  }
 
   return (
     <FridgeWrapper>
       <Title>Access Fridge</Title>
       <SubTitle>Manage Items in Fridge</SubTitle>
+      <AddComponent buttonState={buttonState} AddButton={AddButton} />
       <TableWrapper>
-      <Table>
-        <thead>
-          <tr>
-            <Td>Name</Td>
-            <Td>Expiry</Td>
-            <Td>No.</Td>
-            <Td>Courier</Td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <Td>John Smith</Td>
-            <Td>26/2/12</Td>
-            <Td>38</Td>
-            <Td>David Guy</Td>
-          </tr>
-        </tbody>
-      </Table>
+        <Table>
+          <thead>
+            <tr>
+              <Td>Name</Td>
+              <Td>Expiry</Td>
+              <Td>No.</Td>
+              <Td>Courier</Td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <Td>John Smith</Td>
+              <Td>26/2/12</Td>
+              <Td>38</Td>
+              <Td>David Guy</Td>
+            </tr>
+          </tbody>
+        </Table>
       </TableWrapper>
       <ButtonWrapper>
-      <Button width={"140px"} backgroundcolor={"#61ff69"}>Add Item</Button>
+        <Button width={"140px"} backgroundcolor={"#61ff69"} onClick={AddButton}>Add Item</Button>
         <Button width={"140px"} backgroundcolor={"#ff6961"}>Remove Item</Button>
       </ButtonWrapper>
     </FridgeWrapper>
