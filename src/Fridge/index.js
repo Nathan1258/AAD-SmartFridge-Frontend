@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import Button from "../ReuseableComponents/Button";
 import {useState} from "react";
-import css from "styled-components";
 
 const FridgeWrapper = styled.div`
   display: flex;
@@ -9,7 +8,7 @@ const FridgeWrapper = styled.div`
   height: 100vh;
   width: 100%;
   margin: 0;
-  position: relative;§
+  position: relative;
 `;
 
 const Title = styled.h1`
@@ -17,6 +16,8 @@ const Title = styled.h1`
   font-size: 2.5rem;
   color: white;
 `;
+
+
 
 const SubTitle = styled.h4`
   margin: 0;
@@ -65,16 +66,86 @@ const Overlay = styled.div`
 
 const AddDiv = styled.div`
   display: ${props => props.buttonState ? 'flex' : 'none'};
+  flex-direction: column;
   width: 600px;
   height: 400px;
-  background-color: lightblue;
+  background-color: #29323f;
   position: absolute;
   top: 100px;
   align-self: center;
   z-index: 999;
   border-radius: 10px;
+  padding: 15px;
+
   
 `;
+
+const Form = styled.form`
+  
+margin-top: 10px;
+align-self: center;
+width: 300px;
+
+
+
+label {
+    color: white;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  input {
+    width: 100%;
+    height: 15px;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    outline: none;
+    border: 2px solid #ddd;
+  }
+
+  input:focus {
+    border-color: #00bcd4; /* Change the border color when the input is in focus */
+  }
+`;
+
+
+function MyForm() {
+  const [itemName, setItemName] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+
+  return (
+    <Form>
+      <label>
+        Item:
+        <input
+          type="text"
+          value={itemName}
+          onChange={(e) => setItemName(e.target.value)}
+        />
+      </label>
+      <label>
+        Quantity:
+        <input
+          type="text"
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+        />
+      </label>
+      <label>
+        Expiry Date:
+        <input
+          type="text"
+          value={expiryDate}
+          onChange={(e) => setExpiryDate(e.target.value)}
+        />
+      </label>
+    </Form>
+  );
+}
+
 
 //Add Items Pop Up 
 const AddComponent = ({ buttonState, AddButton }) => (
@@ -82,7 +153,9 @@ const AddComponent = ({ buttonState, AddButton }) => (
     <>
     <Overlay buttonState={buttonState}></Overlay>
     <AddDiv buttonState={buttonState}>
-
+        <Button alignSelf={"flex-end"} width={"90px"} onClick={AddButton} >Close</Button>
+        <MyForm></MyForm>
+        <Button alignSelf={"center"} width={"140px"} backgroundcolor={"#61ff69"}>Add Item</Button>
     </AddDiv>
     </>
     
@@ -91,8 +164,13 @@ const AddComponent = ({ buttonState, AddButton }) => (
 export function Fridge() {
   const [buttonState, setState] = useState(false);
 
+
   function AddButton() {
     setState(!buttonState);
+  }
+
+  function RemoveButton(){
+    
   }
 
   return (
@@ -105,9 +183,8 @@ export function Fridge() {
           <thead>
             <tr>
               <Td>Name</Td>
+              <Td>Quantity</Td>
               <Td>Expiry</Td>
-              <Td>No.</Td>
-              <Td>Courier</Td>
             </tr>
           </thead>
           <tbody>
@@ -115,7 +192,6 @@ export function Fridge() {
               <Td>John Smith</Td>
               <Td>26/2/12</Td>
               <Td>38</Td>
-              <Td>David Guy</Td>
             </tr>
           </tbody>
         </Table>

@@ -13,6 +13,7 @@ const StyledButton = styled.button`
     margin: 5px;
     width: ${props => props.width || 'auto'};
     height: ${props => props.height || 'auto'};
+    align-self: ${props => props.alignSelf || 'auto'};
     transition: transform 250ms;
 
     &:hover {
@@ -24,9 +25,9 @@ const StyledButton = styled.button`
     }
 `;
 
-const Button = ({ children, onClick, width, height, color, backgroundcolor}) => {
+const Button = ({ children, onClick, width, height, color, backgroundcolor, alignSelf}) => {
   return (
-    <StyledButton onClick={onClick} width={width} height={height} color={color} backgroundcolor={backgroundcolor}>
+    <StyledButton onClick={onClick} width={width} height={height} color={color} backgroundcolor={backgroundcolor} alignSelf={alignSelf}>
       {children}
     </StyledButton>
   );
