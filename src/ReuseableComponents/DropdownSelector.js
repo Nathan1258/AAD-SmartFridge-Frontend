@@ -17,9 +17,11 @@ const StyledSelect = styled.select`
   font-weight: bold;
   width: ${(props) => props.width || "auto"};
   height: ${(props) => props.height || "auto"};
+  margin: ${(props) => props.margin || "0"};
 `;
 
 const DropdownSelector = ({
+  uid,
   options,
   selectedOption,
   onChange,
@@ -27,16 +29,18 @@ const DropdownSelector = ({
   height,
   color,
   backgroundcolor,
+  margin,
 }) => {
   return (
     <DropdownContainer>
       <StyledSelect
         value={selectedOption}
-        onChange={onChange}
+        onChange={(event) => onChange(event, uid)}
         width={width}
         height={height}
         color={color}
         backgroundcolor={backgroundcolor}
+        margin={margin}
       >
         {options.map((option) => (
           <option key={option} value={option}>

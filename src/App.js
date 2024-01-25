@@ -6,6 +6,7 @@ import {
   Route,
   useLocation,
   useNavigate,
+  Navigate,
 } from "react-router-dom";
 import WebFont from "webfontloader";
 import { Home } from "./Home";
@@ -17,9 +18,10 @@ import Popup from "./Popup/popup";
 import { Inventory } from "./Inventory";
 import { NavBar } from "./NavBar";
 import { SideBar } from "./SideBar";
-import { UserProvider } from "./UserContext";
+import { UserProvider, useUser } from "./UserContext";
 import { hasAccessPIN } from "./Utils";
 import { Fridge } from "./Fridge";
+import { Admin } from "./Admin";
 
 const AppContainer = styled.div`
   display: flex;
@@ -127,6 +129,7 @@ function App() {
                           <Route path="/dashboard" element={<Dashboard />} />
                           <Route path="/inventory" element={<Inventory />} />
                           <Route path="/fridge" element={<Fridge />} />
+                          <Route path="/admin" element={<Admin />} />
                           <Route path="*" element={<NoMatch />} />
                         </Routes>
                       </MainContentContainer>
