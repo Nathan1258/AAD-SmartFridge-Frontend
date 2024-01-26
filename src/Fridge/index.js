@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Button from "../ReuseableComponents/Button";
 import { useState, useEffect } from "react";
-import { getAllItems, getAllItemsInStock } from "../API";
+import { getAllItems, getAllItemsInStock, insertItem } from "../API";
 import { formatDateToReadable } from "../Inventory/index";
 
 const FridgeWrapper = styled.div`
@@ -119,56 +119,66 @@ const Form = styled.form`
   }
 `;
 
-function ItemForm() {
-  const [itemName, setItemName] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-
+function ItemForm({ setItemID, setQuantity, setExpiryDate }) {
   return (
     <Form>
       <label>
         Item:
-        <input
-          type="text"
-          value={itemName}
-          onChange={(e) => setItemName(e.target.value)}
-        />
+        <input type="number" onChange={(e) => setItemID(e.target.value)} />
       </label>
       <label>
         Quantity:
-        <input
-          type="text"
-          value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
-        />
+        <input type="number" onChange={(e) => setQuantity(e.target.value)} />
       </label>
       <label>
         Expiry Date:
-        <input
-          type="text"
-          value={expiryDate}
-          onChange={(e) => setExpiryDate(e.target.value)}
-        />
+        <input type="text" onChange={(e) => setExpiryDate(e.target.value)} />
       </label>
     </Form>
   );
 }
 
-//Add Items Pop Up
-const AddComponent = ({ addButtonState, AddButton, overlayState }) => (
-  <>
-    <Overlay overlayState={overlayState}></Overlay>
-    <AddDiv addButtonState={addButtonState}>
-      <Button alignSelf={"flex-end"} width={"90px"} onClick={AddButton}>
-        Close
-      </Button>
-      <ItemForm />
-      <Button alignSelf={"center"} width={"140px"} backgroundcolor={"#61ff69"}>
-        Add Item
-      </Button>
-    </AddDiv>
-  </>
-);
+const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
+  const [itemID, setItemID] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+
+  const handleAddItem = () => {
+    // Call the insertItem method with form data
+    insertItem(itemID, quantity, expiryDate)
+      .then((data) => {
+        console.log("Item added successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error adding item:", error);
+        console.error("Test");
+      });
+  };
+
+  return (
+    <>
+      <Overlay overlayState={overlayState}></Overlay>
+      <AddDiv addButtonState={addButtonState}>
+        <Button alignSelf={"flex-end"} width={"90px"} onClick={AddButton}>
+          Close
+        </Button>
+        <ItemForm
+          setItemID={setItemID}
+          setQuantity={setQuantity}
+          setExpiryDate={setExpiryDate}
+        />
+        <Button
+          alignSelf={"center"}
+          width={"140px"}
+          backgroundcolor={"#61ff69"}
+          onClick={handleAddItem}
+        >
+          Add Item
+        </Button>
+      </AddDiv>
+    </>
+  );
+};
 
 // Remove Items
 const RemoveComponent = ({ removeButtonState, RemoveButton, overlayState }) => (
@@ -241,7 +251,6 @@ export function Fridge() {
                 <Td>{formatDateToReadable(item.expiryDate)}</Td>
                 <Td>{item.Price}</Td>
                 <Td>{formatDateToReadable(item.lastUpdated)}</Td>
-                {/* Add more table cells based on your data structure */}
               </tr>
             ))}
           </tbody>

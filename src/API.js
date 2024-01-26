@@ -13,7 +13,7 @@ export const clockIn = (userNumber, password) => {
       .then((data) => {
         if (data.code !== 200)
           return reject(
-            "Your user number or password is wrong. Please try again.",
+            "Your user number or password is wrong. Please try again."
           );
         return resolve(data.data.accessPIN);
       })
@@ -34,7 +34,7 @@ export const getUserDetails = (accessPIN) => {
       .then((data) => {
         if (data.code !== 200)
           return reject(
-            "Your accessPIN is wrong or has expired. Please try again.",
+            "Your accessPIN is wrong or has expired. Please try again."
           );
         return resolve(data.data);
       })
@@ -55,7 +55,7 @@ export const verifyPIN = (accessPIN) => {
       .then((data) => {
         if (data.code !== 200)
           return reject(
-            "Your accessPIN is wrong or has expired. Please try again.",
+            "Your accessPIN is wrong or has expired. Please try again."
           );
         return resolve(accessPIN);
       })
@@ -93,6 +93,29 @@ export const getAllItemsInStock = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data.code != 200) return reject("Could not get items");
+        return resolve(data.data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
+export const insertItem = (itemID, quantity, expiryDate) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/item/insert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessPIN: getAccessPIN(),
+        itemID: itemID,
+        quantity: quantity,
+        expiryDate: expiryDate,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code != 200) return reject("Couldn't Add Items");
         return resolve(data.data);
       })
       .catch((error) => reject(error.message));
