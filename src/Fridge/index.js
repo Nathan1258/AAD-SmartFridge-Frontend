@@ -40,7 +40,7 @@ const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   color: white;
-  table-layout: fixed;
+  //table-layout: fixed;
 `;
 
 const Td = styled.td`
@@ -240,7 +240,6 @@ export function Fridge() {
               <th>Expiry Date</th>
               <th>Product Price</th>
               <th>Last Updated</th>
-              {/* Add more table headers based on your data structure */}
             </tr>
           </thead>
           <tbody>
