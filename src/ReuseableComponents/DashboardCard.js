@@ -13,6 +13,15 @@ const StyledCard = styled.div`
   height: ${(props) => props.height || "auto"};
   transition: transform 250ms;
   margin: ${(props) => props.margin || "0"};
+  padding-top: 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  h1 {
+    font-size: 25px;
+    margin: 0px;
+  }
 
   &:hover {
     transform: scale(1.1);
@@ -23,19 +32,6 @@ const StyledCard = styled.div`
     transform: scale(1);
   }
 `;
-
-const StyledHeader = styled.div`
-  width: 100%;
-  height: 30px;
-  color: #ddd;
-  font-size: 20px;
-  background-color: #293039;
-  border-radius: 5px;
-`;
-
-const CardHeader = ({ title }) => {
-  return <StyledHeader>{title}</StyledHeader>;
-};
 
 const DashboardCard = ({
   onClick,
@@ -56,7 +52,6 @@ const DashboardCard = ({
       color={color}
       margin={margin}
     >
-      <CardHeader title={title}></CardHeader>
       {children}
     </StyledCard>
   );
