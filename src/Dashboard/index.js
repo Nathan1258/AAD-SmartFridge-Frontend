@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import DashboardCard from "../ReuseableComponents/DashboardCard";
 import Button from "../ReuseableComponents/Button";
-import photo from "../Resources/fridgephoto.jpg";
+import photo from "../Resources/fridgephoto_svg.svg";
 
 const DashboardWrapper = styled.div`
   display: flex;
@@ -31,6 +31,8 @@ const CardsWrapper = styled.div`
   justify-content: center;
 `;
 
+
+
 export function Dashboard(props) {
   return (
     <DashboardWrapper>
@@ -39,6 +41,7 @@ export function Dashboard(props) {
       <CardsWrapper>
         <DashboardCard width={"300px"} height={"200px"} color={"white"}>
           <h1>Access Fridge</h1>
+          <img src={photo}></img>
         </DashboardCard>
         <DashboardCard
           width={"300px"}
@@ -46,6 +49,7 @@ export function Dashboard(props) {
           title={"Health and Saftey"}
         >
           <h1>Delivery</h1>
+          <img src={photo}></img>
         </DashboardCard>
         <DashboardCard width={"300px"} height={"200px"}>
           <h1>Health and Saftey</h1>

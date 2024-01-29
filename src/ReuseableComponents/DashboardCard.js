@@ -13,7 +13,7 @@ const StyledCard = styled.div`
   height: ${(props) => props.height || "auto"};
   transition: transform 250ms;
   margin: ${(props) => props.margin || "0"};
-  padding-top: 10px;
+  padding: 20px;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -21,6 +21,7 @@ const StyledCard = styled.div`
   h1 {
     font-size: 25px;
     margin: 0px;
+    
   }
 
   &:hover {
