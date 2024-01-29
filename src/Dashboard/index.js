@@ -46,7 +46,7 @@ export function Dashboard(props) {
       <Title>Dashboard</Title>
       <SubTitle>Welcome Back to Your Fridge</SubTitle>
       <CardsWrapper>
-        <DashboardCard width={"330px"} height={"220px"} color={"white"}>
+        <DashboardCard width={"330px"} height={"220px"} color={"white"} page={"/fridge"}>
           <h1>Access Fridge</h1>
           <Image src={photo}></Image>
         </DashboardCard>

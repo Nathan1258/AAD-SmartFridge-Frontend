@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const StyledCard = styled.div`
   background-color: ${(props) => props.backgroundColor || "rgba(255, 255, 255, 0.125)"};
@@ -44,7 +45,7 @@ top: 0;
 left: 0;
 width: 100%;
 height: 100%;
-background-color: rgba(0, 0, 0, 0.15);
+background-color: rgba(0, 0, 0, 0.2);
 z-index: 999;
 pointer-events: none; 
 transition: opacity 0.3s ease;
@@ -56,25 +57,39 @@ ${StyledCard}:hover & {
 
 `;
 
+
+
 const DashboardCard = ({
-  onClick,
   width,
   height,
   color,
   backgroundColor,
   margin,
   children,
+  page,
+
+  
+  
 }) => {
+  
+  const navigate = useNavigate();
+
+  function handleClick() {
+    
+    navigate(page);
+  
+  }
+  
   return (
     <StyledCard
       backgroundColor={backgroundColor}
-      onClick={onClick}
       width={width}
       height={height}
       color={color}
       margin={margin}
+      onClick={handleClick}
     >
-      <Overlay/>
+      <Overlay onClick={handleClick}></Overlay>
       {children}
     </StyledCard>
   );
