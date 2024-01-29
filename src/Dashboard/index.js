@@ -25,11 +25,18 @@ const SubTitle = styled.h4`
 
 const CardsWrapper = styled.div`
   display: flex;
-  margin-top: 40px;
+  margin-top: 80px;
   flex-direction: row;
-  gap: 30px;
+  gap: 50px;
   justify-content: center;
 `;
+
+const Image = styled.img`
+  width: 80%;
+  height: 80%;
+  border-radius: 30px;
+`;
+
 
 
 
@@ -39,21 +46,20 @@ export function Dashboard(props) {
       <Title>Dashboard</Title>
       <SubTitle>Welcome Back to Your Fridge</SubTitle>
       <CardsWrapper>
-        <DashboardCard width={"300px"} height={"200px"} color={"white"}>
+        <DashboardCard width={"330px"} height={"220px"} color={"white"}>
           <h1>Access Fridge</h1>
-          <img src={photo}></img>
+          <Image src={photo}></Image>
         </DashboardCard>
         <DashboardCard
-          width={"300px"}
-          height={"200px"}
-          title={"Health and Saftey"}
+          width={"330px"}
+          height={"220px"}
         >
           <h1>Delivery</h1>
-          <img src={photo}></img>
+          <Image src={photo}></Image>
         </DashboardCard>
-        <DashboardCard width={"300px"} height={"200px"}>
+        <DashboardCard width={"330px"} height={"220px"}>
           <h1>Health and Saftey</h1>
-          <img src={photo}></img>
+          <Image src={photo}></Image>
         </DashboardCard>
       </CardsWrapper>
     </DashboardWrapper>
