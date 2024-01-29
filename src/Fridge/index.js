@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Button from "../ReuseableComponents/Button";
 import { useState, useEffect } from "react";
-import { getAllItems, getAllItemsInStock, insertItem } from "../API";
+import { getAllItemsInStock, insertItem, removeItem } from "../API";
 import { formatDateToReadable } from "../Inventory/index";
 
 const FridgeWrapper = styled.div`
@@ -119,39 +119,21 @@ const Form = styled.form`
   }
 `;
 
-function ItemForm({ setItemID, setQuantity, setExpiryDate }) {
-  return (
-    <Form>
-      <label>
-        Item:
-        <input type="number" onChange={(e) => setItemID(e.target.value)} />
-      </label>
-      <label>
-        Quantity:
-        <input type="number" onChange={(e) => setQuantity(e.target.value)} />
-      </label>
-      <label>
-        Expiry Date:
-        <input type="text" onChange={(e) => setExpiryDate(e.target.value)} />
-      </label>
-    </Form>
-  );
-}
 
+
+//Add Items
 const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
   const [itemID, setItemID] = useState("");
   const [quantity, setQuantity] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
 
   const handleAddItem = () => {
-    // Call the insertItem method with form data
     insertItem(itemID, quantity, expiryDate)
       .then((data) => {
         console.log("Item added successfully:", data);
       })
       .catch((error) => {
         console.error("Error adding item:", error);
-        console.error("Test");
       });
   };
 
@@ -162,11 +144,20 @@ const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
         <Button alignSelf={"flex-end"} width={"90px"} onClick={AddButton}>
           Close
         </Button>
-        <ItemForm
-          setItemID={setItemID}
-          setQuantity={setQuantity}
-          setExpiryDate={setExpiryDate}
-        />
+        <Form>
+          <label>
+            Item:
+            <input type="number" onChange={(e) => setItemID(e.target.value)} />
+          </label>
+          <label>
+            Quantity:
+            <input type="number" onChange={(e) => setQuantity(e.target.value)} />
+          </label>
+          <label>
+            Expiry Date:
+            <input type="text" onChange={(e) => setExpiryDate(e.target.value)} />
+          </label>
+        </Form>
         <Button
           alignSelf={"center"}
           width={"140px"}
@@ -181,19 +172,46 @@ const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
 };
 
 // Remove Items
-const RemoveComponent = ({ removeButtonState, RemoveButton, overlayState }) => (
-  <>
-    <Overlay overlayState={overlayState}></Overlay>
-    <RemoveDiv removeButtonState={removeButtonState}>
-      <Button alignSelf={"flex-end"} width={"90px"} onClick={RemoveButton}>
-        Close
-      </Button>
-      <Button alignSelf={"center"} width={"140px"} backgroundcolor={"#ff6961"}>
-        Remove Item
-      </Button>
-    </RemoveDiv>
-  </>
-);
+const RemoveComponent = ({ removeButtonState, RemoveButton, overlayState }) => {
+
+  const [itemID, setItemID] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+
+  const handleRemoveItem = () => {
+    // Call the insertItem method with form data
+    removeItem(itemID, quantity)
+      .then((data) => {
+        console.log("Item removed successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error removing item:", error);
+      });
+  };
+  return (
+    <>
+      <Overlay overlayState={overlayState}></Overlay>
+      <RemoveDiv removeButtonState={removeButtonState}>
+        <Button alignSelf={"flex-end"} width={"90px"} onClick={RemoveButton}>
+          Close
+        </Button>
+        <Form>
+          <label>
+            Item:
+            <input type="number" onChange={(e) => setItemID(e.target.value)} />
+          </label>
+          <label>
+            Quantity:
+            <input type="number" onChange={(e) => setQuantity(e.target.value)} />
+          </label>
+        </Form>
+        <Button alignSelf={"center"} width={"140px"} backgroundcolor={"#ff6961"} onClick={handleRemoveItem}>
+          Remove Item
+        </Button>
+      </RemoveDiv>
+    </>
+  )
+};
 
 export function Fridge() {
   const [addButtonState, setState] = useState(false);
