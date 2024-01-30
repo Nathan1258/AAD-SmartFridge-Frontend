@@ -99,14 +99,14 @@ export function SideBar(props) {
         >
           Access Fridge
         </SideBarLink>
-        <SideBarLink
-          current={location.pathname === "/order-management"}
-          onClick={() => handleClick("/order-management")}
-        >
-          Order Management
-        </SideBarLink>
         {access.toLowerCase() === "admin" && (
           <>
+            <SideBarLink
+              current={location.pathname === "/order-management"}
+              onClick={() => handleClick("/order-management")}
+            >
+              Order Management
+            </SideBarLink>
             <SideBarLink
               access={access}
               current={location.pathname === "/expiring"}
