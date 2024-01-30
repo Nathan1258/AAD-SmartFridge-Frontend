@@ -26,7 +26,7 @@ const SubTitle = styled.h4`
 
 const CardsWrapper = styled.div`
   display: flex;
-  margin-top: 50px;
+  margin-top: 40px;
   flex-direction: row;
   gap: 50px;
   justify-content: center;
@@ -39,13 +39,12 @@ const Image = styled.img`
 `;
 
 const Table = styled.table`
-  width: 80%;
-  margin-top: 100px;
+  width: 100%;
+  margin-top: 50px;
   border-collapse: collapse;
   color: white;
   max-height: 400px;
   overflow-y: auto;
-  align-self: center;
 `;
 
 const Td = styled.td`
@@ -87,6 +86,7 @@ export function Dashboard(props) {
           <Image src={photo}></Image>
         </DashboardCard>
       </CardsWrapper>
+      <SubTitle style={{ marginTop: "30px" }}>Previous deliveries</SubTitle>
       <Table>
         <thead>
           <tr>
@@ -105,16 +105,16 @@ export function Dashboard(props) {
         <tbody>
           {items.map((item) => (
             <tr key={item.deliveryID}>
-              <td>{item.deliveryID}</td>
-              <td>{item.orderID}</td>
-              <td>{item.deliveryDate}</td>
-              <td>{item.itemsToDeliver}</td>
-              <td>{item.accessCode}</td>
-              <td>{item.itemsUndelivered}</td>
-              <td>{item.status}</td>
-              <td>{item.deliveryNotes}</td>
-              <td>{item.receivedBy}</td>
-              <td>{item.totalCost}</td>
+              <Td>{item.deliveryID}</Td>
+              <Td>{item.orderID}</Td>
+              <Td>{item.deliveryDate}</Td>
+              <Td>{item.itemsToDeliver}</Td>
+              <Td>{item.accessCode}</Td>
+              <Td>{item.itemsUndelivered}</Td>
+              <Td>{item.status}</Td>
+              <Td>{item.deliveryNotes}</Td>
+              <Td>{item.receivedBy}</Td>
+              <Td>{item.totalCost}</Td>
             </tr>
           ))}
         </tbody>
