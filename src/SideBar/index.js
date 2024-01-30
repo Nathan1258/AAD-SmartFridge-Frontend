@@ -106,13 +106,22 @@ export function SideBar(props) {
           Order Management
         </SideBarLink>
         {access.toLowerCase() === "admin" && (
-          <SideBarLink
-            access={access}
-            current={location.pathname === "/admin"}
-            onClick={() => handleClick("/admin")}
-          >
-            Admin tools
-          </SideBarLink>
+          <>
+            <SideBarLink
+              access={access}
+              current={location.pathname === "/expiring"}
+              onClick={() => handleClick("/expiring")}
+            >
+              Expiring items
+            </SideBarLink>
+            <SideBarLink
+              access={access}
+              current={location.pathname === "/admin"}
+              onClick={() => handleClick("/admin")}
+            >
+              Admin tools
+            </SideBarLink>
+          </>
         )}
       </NavigationLinks>
     </SideBarWrapper>

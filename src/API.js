@@ -42,6 +42,45 @@ export const getUserDetails = (accessPIN) => {
   });
 };
 
+export const getExpiringProducts = () => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/items/expiring", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ accessPIN: getAccessPIN() }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code != 200) return reject("Could not get items");
+        return resolve(data.data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
+export const addItemToOrder = (products) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/delivery/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ accessPIN: getAccessPIN(), products: products }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code !== 200)
+          return reject(
+            "Your accessPIN is wrong or has expired. Please try again.",
+          );
+        return resolve(data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
 export const verifyPIN = (accessPIN) => {
   return new Promise((resolve, reject) => {
     fetch("https://aad-api.ellisn.com/v1/users/verifyAccessToken", {
