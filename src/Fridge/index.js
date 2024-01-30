@@ -40,7 +40,8 @@ const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   color: white;
-  //table-layout: fixed;
+  max-height: 400px;
+  overflow-y: auto;
 `;
 
 const Td = styled.td`
@@ -119,15 +120,13 @@ const Form = styled.form`
   }
 `;
 
-
-
 //Add Items
 const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
   const [itemID, setItemID] = useState("");
   const [quantity, setQuantity] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
 
-  const handleAddItem = () => {
+  const handleAddItem = ({}) => {
     insertItem(itemID, quantity, expiryDate)
       .then((data) => {
         console.log("Item added successfully:", data);
@@ -151,11 +150,17 @@ const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
           </label>
           <label>
             Quantity:
-            <input type="number" onChange={(e) => setQuantity(e.target.value)} />
+            <input
+              type="number"
+              onChange={(e) => setQuantity(e.target.value)}
+            />
           </label>
           <label>
             Expiry Date:
-            <input type="text" onChange={(e) => setExpiryDate(e.target.value)} />
+            <input
+              type="text"
+              onChange={(e) => setExpiryDate(e.target.value)}
+            />
           </label>
         </Form>
         <Button
@@ -173,7 +178,6 @@ const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
 
 // Remove Items
 const RemoveComponent = ({ removeButtonState, RemoveButton, overlayState }) => {
-
   const [itemID, setItemID] = useState("");
   const [quantity, setQuantity] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
@@ -202,15 +206,24 @@ const RemoveComponent = ({ removeButtonState, RemoveButton, overlayState }) => {
           </label>
           <label>
             Quantity:
-            <input type="number" onChange={(e) => setQuantity(e.target.value)} />
+            <input
+              type="number"
+              onChange={(e) => setQuantity(e.target.value)}
+            />
           </label>
         </Form>
-        <Button alignSelf={"center"} width={"140px"} backgroundcolor={"#ff6961"} onClick={handleRemoveItem}>
+        <Button
+          alignSelf={"center"}
+          width={"140px"}
+          backgroundcolor={"#ff6961"}
+          onClick={handleRemoveItem}
+        >
           Remove Item
         </Button>
+        <PopUpMessage>Test</PopUpMessage>
       </RemoveDiv>
     </>
-  )
+  );
 };
 
 export function Fridge() {
