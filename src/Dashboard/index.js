@@ -38,9 +38,18 @@ const Image = styled.img`
   border-radius: 30px;
 `;
 
+const TableWrapper = styled.div`
+  display: flex;
+  margin-top: 20px;
+  width: 90%;
+  border-radius: 10px;
+  max-height: 300px;
+  overflow: auto;
+  border: 2px solid #ddd;
+  align-self: center;
+`;
 const Table = styled.table`
   width: 100%;
-  margin-top: 50px;
   border-collapse: collapse;
   color: white;
   max-height: 400px;
@@ -87,38 +96,40 @@ export function Dashboard(props) {
         </DashboardCard>
       </CardsWrapper>
       <SubTitle style={{ marginTop: "30px" }}>Previous deliveries</SubTitle>
-      <Table>
-        <thead>
-          <tr>
-            <th>Delivery ID</th>
-            <th>Order ID</th>
-            <th>Delivery Date</th>
-            <th>Items to Deliver</th>
-            <th>Access Code</th>
-            <th>Items Undelivered</th>
-            <th>Status</th>
-            <th>Delivery Notes</th>
-            <th>Received By</th>
-            <th>Total Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item) => (
-            <tr key={item.deliveryID}>
-              <Td>{item.deliveryID}</Td>
-              <Td>{item.orderID}</Td>
-              <Td>{item.deliveryDate}</Td>
-              <Td>{item.itemsToDeliver}</Td>
-              <Td>{item.accessCode}</Td>
-              <Td>{item.itemsUndelivered}</Td>
-              <Td>{item.status}</Td>
-              <Td>{item.deliveryNotes}</Td>
-              <Td>{item.receivedBy}</Td>
-              <Td>{item.totalCost}</Td>
+      <TableWrapper>
+        <Table>
+          <thead>
+            <tr>
+              <th>Delivery ID</th>
+              <th>Order ID</th>
+              <th>Delivery Date</th>
+              <th>Items to Deliver</th>
+              <th>Access Code</th>
+              <th>Items Undelivered</th>
+              <th>Status</th>
+              <th>Delivery Notes</th>
+              <th>Received By</th>
+              <th>Total Cost</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.deliveryID}>
+                <Td>{item.deliveryID}</Td>
+                <Td>{item.orderID}</Td>
+                <Td>{item.deliveryDate}</Td>
+                <Td>{item.itemsToDeliver}</Td>
+                <Td>{item.accessCode}</Td>
+                <Td>{item.itemsUndelivered}</Td>
+                <Td>{item.status}</Td>
+                <Td>{item.deliveryNotes}</Td>
+                <Td>{item.receivedBy}</Td>
+                <Td>{item.totalCost}</Td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </TableWrapper>
     </DashboardWrapper>
   );
 }
