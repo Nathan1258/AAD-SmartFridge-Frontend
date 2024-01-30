@@ -23,6 +23,7 @@ import { hasAccessPIN } from "./Utils";
 import { Fridge } from "./Fridge";
 import { Admin } from "./Admin";
 import { Expiring } from "./Expiring";
+import { OrderManagement } from "./OrderManagement";
 
 const AppContainer = styled.div`
   display: flex;
@@ -132,6 +133,10 @@ function App() {
                           <Route path="/fridge" element={<Fridge />} />
                           <Route path="/admin" element={<Admin />} />
                           <Route path="/expiring" element={<Expiring />} />
+                          <Route
+                            path="/order-management"
+                            element={<OrderManagement />}
+                          />
                           <Route path="*" element={<NoMatch />} />
                         </Routes>
                       </MainContentContainer>

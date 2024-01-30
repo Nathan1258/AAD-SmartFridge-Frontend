@@ -67,7 +67,75 @@ export const addItemToOrder = (products) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ accessPIN: getAccessPIN(), products: products }),
+      body: JSON.stringify({
+        accessPIN: getAccessPIN(),
+        products: products,
+        endpoint: " on expiry page",
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code !== 200)
+          return reject(
+            "Your accessPIN is wrong or has expired. Please try again.",
+          );
+        return resolve(data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
+export const removeItemFromOrder = (product) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/delivery/remove", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessPIN: getAccessPIN(),
+        productID: product.productID,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code !== 200) return reject(data.message);
+        return resolve(data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
+export const editItemFromOrder = (product, newQuantity) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/delivery/edit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessPIN: getAccessPIN(),
+        productID: product.productID,
+        quantity: newQuantity,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code !== 200) return reject(data.message);
+        return resolve(data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
+export const getAllOrderedProducts = () => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/delivery/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ accessPIN: getAccessPIN() }),
     })
       .then((response) => response.json())
       .then((data) => {

@@ -29,7 +29,7 @@ const Title = styled.h1`
   font-size: 2.5rem;
   color: white;
 `;
-const SubTitle = styled.h4`
+const SubTitle = styled.h3`
   margin: 0;
   color: white;
 `;
@@ -235,13 +235,43 @@ function ProductsAddedToOrder(selectedProducts, setSelectedProducts) {
   );
 }
 
-const addToOrder = (selectedProducts) => {
-  addItemToOrder(selectedProducts)
+const addToOrder = (selectedProducts, triggerPopup) => {
+  const convertedProducts = selectedProducts.map((product) => ({
+    ...product,
+    itemID: parseInt(product.itemID, 10),
+    quantity: parseInt(product.quantity, 10),
+  }));
+  addItemToOrder(convertedProducts)
     .then((response) => {
-      console.log(response);
+      if (response.code == 200) {
+        triggerPopup(
+          "Item(s) ordered!",
+          "Item(s) have been added to next week's order",
+          "Okay",
+          () => {
+            window.location.reload();
+          },
+        );
+      } else {
+        triggerPopup(
+          "Error",
+          "Error ordering items, please try again later.",
+          "Okay",
+          () => {
+            window.location.reload();
+          },
+        );
+      }
     })
     .catch((error) => {
-      console.log(error);
+      triggerPopup(
+        "Error",
+        "Error ordering items, please try again later.",
+        "Okay",
+        () => {
+          window.location.reload();
+        },
+      );
     });
 };
 
@@ -255,7 +285,6 @@ export function Expiring(props) {
   useEffect(() => {
     getExpiringProducts()
       .then((data) => {
-        console.log(data);
         setProductsExpiringSoon(data);
         setIsLoading(false);
       })
@@ -299,7 +328,7 @@ export function Expiring(props) {
                 {ProductsAddedToOrder(selectedProducts, setSelectedProducts)}
                 <Button
                   width={"250px"}
-                  onClick={() => addToOrder(selectedProducts)}
+                  onClick={() => addToOrder(selectedProducts, triggerPopup)}
                 >
                   Add to order
                 </Button>
