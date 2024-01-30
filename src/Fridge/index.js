@@ -3,6 +3,8 @@ import Button from "../ReuseableComponents/Button";
 import { useState, useEffect } from "react";
 import { getAllItemsInStock, insertItem, removeItem } from "../API";
 import { formatDateToReadable } from "../Inventory/index";
+import { Popup, PopupProvider } from "../Popup/popup";
+import { usePopup } from "../Popup/popupContext";
 
 const FridgeWrapper = styled.div`
   display: flex;
@@ -122,17 +124,38 @@ const Form = styled.form`
 
 //Add Items
 const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
-  const [itemID, setItemID] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [itemID, setItemID] = useState();
+  const [quantity, setQuantity] = useState();
   const [expiryDate, setExpiryDate] = useState("");
+  const { triggerPopup } = usePopup();
+
+  const isValidDate = (input) => {
+    const dateRegex = /^\d{2}-\d{2}-\d{2}$/;
+    return dateRegex.test(input);
+  };
 
   const handleAddItem = ({}) => {
+    if (!isValidDate(expiryDate)) {
+      triggerPopup("Error", "Date must be in the format dd-mm-yy", "Close");
+      return;
+    }
+
+    const parsedItemID = parseInt(itemID, 10);
+    const parsedQuantity = parseInt(quantity, 10);
+
+    if (isNaN(parsedItemID) || isNaN(parsedQuantity)) {
+      triggerPopup("Error", "ItemID and quantity must be integers", "Close");
+      return;
+    }
+
     insertItem(itemID, quantity, expiryDate)
       .then((data) => {
         console.log("Item added successfully:", data);
+        triggerPopup("Item Added", "You have successfully added item", "Close");
       })
       .catch((error) => {
         console.error("Error adding item:", error);
+        triggerPopup("Error", error, "Close");
       });
   };
 
@@ -178,18 +201,31 @@ const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
 
 // Remove Items
 const RemoveComponent = ({ removeButtonState, RemoveButton, overlayState }) => {
-  const [itemID, setItemID] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
+  const [itemID, setItemID] = useState();
+  const [quantity, setQuantity] = useState();
+  const { triggerPopup } = usePopup();
 
   const handleRemoveItem = () => {
-    // Call the insertItem method with form data
-    removeItem(itemID, quantity)
+    const parsedItemID = parseInt(itemID, 10);
+    const parsedQuantity = parseInt(quantity, 10);
+
+    if (isNaN(parsedItemID) || isNaN(parsedQuantity)) {
+      triggerPopup("Error", "ItemID and quantity must be integers", "Close");
+      return;
+    }
+
+    removeItem(parsedItemID, parsedQuantity)
       .then((data) => {
         console.log("Item removed successfully:", data);
+        triggerPopup(
+          "Item Removed",
+          "You have successfully removed item",
+          "Close"
+        );
       })
       .catch((error) => {
         console.error("Error removing item:", error);
+        triggerPopup("Error", error, "Close");
       });
   };
   return (
@@ -220,7 +256,6 @@ const RemoveComponent = ({ removeButtonState, RemoveButton, overlayState }) => {
         >
           Remove Item
         </Button>
-        <PopUpMessage>Test</PopUpMessage>
       </RemoveDiv>
     </>
   );
