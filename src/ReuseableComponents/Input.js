@@ -17,16 +17,24 @@ const StyledInput = styled.input`
   margin: ${(props) => props.margin || "15px"};
 `;
 
-const Input = ({ placeholder, value, setValue, width, height, margin }) => {
+const Input = ({
+  placeholder,
+  value,
+  setValue,
+  width,
+  height,
+  margin,
+  type,
+}) => {
   return (
     <StyledInput
-      type="text"
       placeholder={placeholder}
       value={value}
       onChange={(e) => setValue(e.target.value)}
       width={width}
       height={height}
       margin={margin}
+      type={type ? type : "text"}
     />
   );
 };
