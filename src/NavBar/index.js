@@ -92,6 +92,9 @@ export function NavBar(props) {
     resetUserData();
     navigate("/clock-in");
   };
+  const report = () => {
+    navigate("/report");
+  };
 
   return (
     <NavBarWrapper>
@@ -100,11 +103,9 @@ export function NavBar(props) {
         <span className="smart">smart.</span>
       </NavTitle>
       <NavButtonsWrapper>
-        <NotificationsWrapper
-          onClick={() => alert("Notifications not implemented yet.")}
-        >
+        <NotificationsWrapper onClick={report}>
           <IoIosNotifications color="white" opacity={0.8} size={25} />
-          <NotificationsText>Notifications </NotificationsText>
+          <NotificationsText>Notifications</NotificationsText>
         </NotificationsWrapper>
         <LogoutWrapper onClick={logout}>
           <IoLogOut color="white" opacity={0.8} size={25} />
