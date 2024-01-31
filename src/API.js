@@ -177,7 +177,7 @@ export const getActivityLog = (dateStart, dateEnd) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.code != 200) return reject("Could not register user");
+        if (data.code != 200) return reject("Could not get logs");
         return resolve(data.data);
       })
       .catch((error) => reject(error.message));

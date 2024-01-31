@@ -127,9 +127,9 @@ export function Report(props) {
         <Table>
           <thead>
             <tr>
-              <th>uid</th>
-              <th>Delivery Date</th>
-              <th>Items to Deliver</th>
+              <th>User ID</th>
+              <th>Action</th>
+              <th>Occured</th>
             </tr>
           </thead>
           <tbody>
