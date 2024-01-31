@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const DashboardWrapper = styled.div`
+const ReportWrapper = styled.div`
   display: flex;
   height: 100vh;
   width: 100%;
@@ -13,10 +13,10 @@ const Title = styled.h1`
   color: white;
 `;
 
-export function Dashboard(props) {
+export function Report(props) {
   return (
-    <DashboardWrapper>
-      <Title>Dashboard</Title>
-    </DashboardWrapper>
+    <ReportWrapper>
+      <Title>Report</Title>
+    </ReportWrapper>
   );
 }

@@ -22,6 +22,7 @@ import { UserProvider, useUser } from "./UserContext";
 import { hasAccessPIN } from "./Utils";
 import { Fridge } from "./Fridge";
 import { Admin } from "./Admin";
+import { Report } from "./Report";
 
 const AppContainer = styled.div`
   display: flex;
@@ -129,6 +130,7 @@ function App() {
                           <Route path="/dashboard" element={<Dashboard />} />
                           <Route path="/inventory" element={<Inventory />} />
                           <Route path="/fridge" element={<Fridge />} />
+                          <Route path="/report" element={<Report />} />
                           <Route path="/admin" element={<Admin />} />
                           <Route path="*" element={<NoMatch />} />
                         </Routes>
