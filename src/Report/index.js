@@ -92,12 +92,17 @@ const Form = styled.form`
 
 export function Report(props) {
   const [items, setItems] = useState([]);
+  const [dateStart, setStartDate] = useState();
+  const [dateEnd, setEndDate] = useState();
 
-  useEffect(() => {
-    getActivityLog()
-      .then((data) => setItems(data))
-      .catch((error) => console.error(error));
-  }, []);
+  const handleButtonClick = async () => {
+    try {
+      const data = await getActivityLog(dateStart, dateEnd);
+      setItems(data);
+    } catch (error) {
+      console.error("Error fetching test activity log:", error);
+    }
+  };
 
   return (
     <ReportWrapper>
@@ -107,15 +112,18 @@ export function Report(props) {
         <Form>
           <label>
             Start Date:
-            <input type="number" />
+            <input
+              type="number"
+              onChange={(e) => setStartDate(e.target.value)}
+            />
           </label>
           <label>
             End Date:
-            <input type="number" />
+            <input type="number" onChange={(e) => setEndDate(e.target.value)} />
           </label>
         </Form>
         <ButtonWrapper>
-          <Button width={"140px"} height={"40px"}>
+          <Button width={"140px"} height={"40px"} onClick={handleButtonClick}>
             Generate
           </Button>
           <Button width={"140px"} height={"40px"}>
