@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { getActivityLog } from "../API";
 import Button from "../ReuseableComponents/Button";
+import { Popup, PopupProvider } from "../Popup/popup";
+import { usePopup } from "../Popup/popupContext";
 
 const ReportWrapper = styled.div`
   display: flex;
@@ -86,7 +88,7 @@ const Form = styled.form`
   }
 
   input:focus {
-    border-color: #00bcd4; /* Change the border color when the input is in focus */
+    border-color: #00bcd4;
   }
 `;
 
@@ -94,6 +96,7 @@ export function Report(props) {
   const [items, setItems] = useState([]);
   const [dateStart, setStartDate] = useState();
   const [dateEnd, setEndDate] = useState();
+  const { triggerPopup } = usePopup();
 
   const handleButtonClick = async () => {
     try {
@@ -102,6 +105,11 @@ export function Report(props) {
     } catch (error) {
       console.error("Error fetching test activity log:", error);
     }
+  };
+
+  const addActivity = ({}) => {
+    triggerPopup("Add Activity");
+    return;
   };
 
   return (
@@ -126,7 +134,7 @@ export function Report(props) {
           <Button width={"140px"} height={"40px"} onClick={handleButtonClick}>
             Generate
           </Button>
-          <Button width={"140px"} height={"40px"}>
+          <Button width={"140px"} height={"40px"} onClick={addActivity}>
             Add Activity
           </Button>
         </ButtonWrapper>
