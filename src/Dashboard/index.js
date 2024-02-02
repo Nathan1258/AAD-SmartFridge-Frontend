@@ -26,7 +26,7 @@ const SubTitle = styled.h4`
 
 const CardsWrapper = styled.div`
   display: flex;
-  margin-top: 40px;
+  margin-top: 100px;
   flex-direction: row;
   gap: 50px;
   justify-content: center;
@@ -36,30 +36,6 @@ const Image = styled.img`
   width: 80%;
   height: 80%;
   border-radius: 30px;
-`;
-
-const TableWrapper = styled.div`
-  display: flex;
-  margin-top: 20px;
-  width: 90%;
-  border-radius: 10px;
-  max-height: 300px;
-  overflow: auto;
-  border: 2px solid #ddd;
-  align-self: center;
-`;
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  color: white;
-  max-height: 400px;
-  overflow-y: auto;
-`;
-
-const Td = styled.td`
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: center;
 `;
 
 export function Dashboard(props) {
@@ -86,50 +62,19 @@ export function Dashboard(props) {
           <h1>Access Fridge</h1>
           <Image src={photo}></Image>
         </DashboardCard>
-        <DashboardCard width={"330px"} height={"220px"}>
-          <h1>Delivery</h1>
+        <DashboardCard
+          width={"330px"}
+          height={"220px"}
+          page={"/order-management"}
+        >
+          <h1>Order Management</h1>
           <Image src={photo}></Image>
         </DashboardCard>
-        <DashboardCard width={"330px"} height={"220px"}>
-          <h1>Health and Saftey</h1>
+        <DashboardCard width={"330px"} height={"220px"} page={"/report"}>
+          <h1>Report</h1>
           <Image src={photo}></Image>
         </DashboardCard>
       </CardsWrapper>
-      <SubTitle style={{ marginTop: "30px" }}>Previous deliveries</SubTitle>
-      <TableWrapper>
-        <Table>
-          <thead>
-            <tr>
-              <th>Delivery ID</th>
-              <th>Order ID</th>
-              <th>Delivery Date</th>
-              <th>Items to Deliver</th>
-              <th>Access Code</th>
-              <th>Items Undelivered</th>
-              <th>Status</th>
-              <th>Delivery Notes</th>
-              <th>Received By</th>
-              <th>Total Cost</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={item.deliveryID}>
-                <Td>{item.deliveryID}</Td>
-                <Td>{item.orderID}</Td>
-                <Td>{item.deliveryDate}</Td>
-                <Td>{item.itemsToDeliver}</Td>
-                <Td>{item.accessCode}</Td>
-                <Td>{item.itemsUndelivered}</Td>
-                <Td>{item.status}</Td>
-                <Td>{item.deliveryNotes}</Td>
-                <Td>{item.receivedBy}</Td>
-                <Td>{item.totalCost}</Td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </TableWrapper>
     </DashboardWrapper>
   );
 }
