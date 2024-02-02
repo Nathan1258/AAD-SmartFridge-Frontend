@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import { getActivityLog } from "../API";
+import { getActivityLog, logAction } from "../API";
 import Button from "../ReuseableComponents/Button";
 import { Popup, PopupProvider } from "../Popup/popup";
 import { usePopup } from "../Popup/popupContext";
@@ -149,9 +149,28 @@ const AddActivityComponent = ({
   overlayState,
   addActivity,
   addButtonState,
+  updateTable,
 }) => {
   const [action, setAction] = useState("");
   const [uid, setUid] = useState();
+  const { triggerPopup } = usePopup();
+
+  const handleAddAction = ({}) => {
+    logAction(action, uid)
+      .then((data) => {
+        console.log("Action logged successfully:", data);
+        triggerPopup(
+          "Action Logged",
+          "You have successfully logged an action",
+          "Close"
+        );
+        updateTable();
+      })
+      .catch((error) => {
+        console.error("Error adding item:", error);
+        triggerPopup("Error", error, "Close");
+      });
+  };
 
   return (
     <>
@@ -181,6 +200,7 @@ const AddActivityComponent = ({
           alignSelf={"center"}
           width={"140px"}
           backgroundcolor={"#61ff69"}
+          onClick={handleAddAction}
         >
           Log Action
         </Button>
@@ -206,7 +226,6 @@ export function Report(props) {
   };
 
   const addActivity = () => {
-    console.log("test");
     setState(!addButtonState);
     setOverlay(!overlayState);
     return;
@@ -220,6 +239,7 @@ export function Report(props) {
         addButtonState={addButtonState}
         addActivity={addActivity}
         overlayState={overlayState}
+        updateTable={updateTable}
       />
       <InputWrapper>
         <Form>

@@ -183,3 +183,25 @@ export const getActivityLog = (dateStart, dateEnd) => {
       .catch((error) => reject(error.message));
   });
 };
+
+export const logAction = (action, uid) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/reports/log-action", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessPIN: getAccessPIN(),
+        action: action,
+        uid: uid,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code != 200) return reject("Could not get logs");
+        return resolve(data.data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
