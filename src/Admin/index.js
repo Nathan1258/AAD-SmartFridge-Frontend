@@ -113,7 +113,7 @@ const TableContainer = styled.div`
   overflow-x: auto;
 `;
 
-function usersTable(users, isLoading, userTableAccessSelection, triggerPopup) {
+function UsersTable({ users, isLoading, triggerPopup, refreshUsers }) {
   return (
     <>
       {isLoading ? (
@@ -141,13 +141,14 @@ function usersTable(users, isLoading, userTableAccessSelection, triggerPopup) {
                         uid={user.uid}
                         options={["normal", "admin", "health"]}
                         selectedOption={user.access}
-                        onChange={(event) =>
+                        onChange={(event) => {
                           handleUserAccessTableChange(
                             event,
                             user.uid,
                             triggerPopup,
-                          )
-                        }
+                            refreshUsers,
+                          );
+                        }}
                         width={"200px"}
                       />
                     }
@@ -162,7 +163,7 @@ function usersTable(users, isLoading, userTableAccessSelection, triggerPopup) {
   );
 }
 
-function handleUserAccessTableChange(event, uid, triggerPopup) {
+function handleUserAccessTableChange(event, uid, triggerPopup, refreshUsers) {
   const newAccess = event.target.value;
   changeUserAccess(uid, newAccess)
     .then((data) => {
@@ -171,7 +172,7 @@ function handleUserAccessTableChange(event, uid, triggerPopup) {
         "User's access has successfully been updated.",
         "Okay",
         () => {
-          window.location.reload();
+          refreshUsers();
         },
       );
     })
@@ -202,8 +203,6 @@ export function Admin(props) {
   const [password, setPassword] = useState("");
   const [accessSelection, setAccessSelection] = useState("admin");
 
-  const [userTableAccessSelection, setUserTableAccessSelection] = useState("");
-
   useEffect(() => {
     if (access != "admin" && !isUsersLoading) {
       triggerPopup(
@@ -218,8 +217,13 @@ export function Admin(props) {
   }, [isUsersLoading]);
 
   useEffect(() => {
+    refreshUsers();
+  }, []);
+
+  const refreshUsers = () => {
     getAllUsers()
       .then((users) => {
+        console.log(users);
         setUsers(users);
         setIsUsersLoading(false);
       })
@@ -234,7 +238,7 @@ export function Admin(props) {
           },
         );
       });
-  }, [userTableAccessSelection]);
+  };
 
   const handleAccessChange = (event) => {
     console.log(event.target.value);
@@ -320,12 +324,12 @@ export function Admin(props) {
           </CreateAccountWrapper>
           <EditAccountWrapper>
             <SubTitle>Edit current accounts</SubTitle>
-            {usersTable(
-              users,
-              isUsersLoading,
-              userTableAccessSelection,
-              triggerPopup,
-            )}
+            <UsersTable
+              users={users}
+              isLoading={isUsersLoading}
+              triggerPopup={triggerPopup}
+              refreshUsers={refreshUsers}
+            />
           </EditAccountWrapper>
         </UserAccountsContent>
       </UserAccountsWrapper>
