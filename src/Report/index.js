@@ -232,11 +232,63 @@ export function Report(props) {
   const [dateEnd, setEndDate] = useState();
   const [overlayState, setOverlay] = useState(false);
   const [addButtonState, setState] = useState(false);
+  const { triggerPopup } = usePopup();
+
+  const isValidDate = (input) => {
+    const dateRegex = /^\d{2}-\d{2}-\d{2}$/;
+    return dateRegex.test(input);
+  };
+
+  const convertToUnix = (inputDate) => {
+    if (!inputDate) {
+      return null;
+    }
+
+    const [day, month, year] = inputDate.split("-");
+    const formattedDate = `20${year}-${month}-${day}T00:00:00Z`;
+    const unixTime = new Date(formattedDate).getTime();
+    if (isNaN(unixTime)) {
+      return null;
+    }
+    return Math.floor(unixTime / 1000);
+  };
 
   const updateTable = async () => {
+    if ((dateStart && !dateEnd) || (!dateStart && dateEnd)) {
+      triggerPopup("Error", "Please provide both start and end dates", "Close");
+      return;
+    }
+
+    if (dateStart && !isValidDate(dateStart)) {
+      triggerPopup(
+        "Error",
+        "Start date must be in the format dd-mm-yy",
+        "Close"
+      );
+      return;
+    }
+
+    if (dateEnd && !isValidDate(dateEnd)) {
+      triggerPopup("Error", "End date must be in the format dd-mm-yy", "Close");
+      return;
+    }
+
+    if (
+      (dateStart.trim() !== "" && dateStart == dateEnd) ||
+      (dateEnd.trim() !== "" && dateStart == dateEnd)
+    ) {
+      triggerPopup("Error", "Dates must be at least one day apart", "Close");
+      return;
+    }
+
     try {
-      const data = await getActivityLog(dateStart, dateEnd);
+      const startDateUnix = convertToUnix(dateStart);
+      const endDateUnix = convertToUnix(dateEnd);
+
+      const data = await getActivityLog(startDateUnix, endDateUnix);
       setItems(data);
+      console.log("Test");
+      console.log(startDateUnix);
     } catch (error) {
       console.error("Error fetching test activity log:", error);
     }
@@ -263,13 +315,18 @@ export function Report(props) {
           <label>
             Start Date:
             <input
-              type="number"
+              type="text"
+              value={dateStart || ""}
               onChange={(e) => setStartDate(e.target.value)}
             />
           </label>
           <label>
             End Date:
-            <input type="number" onChange={(e) => setEndDate(e.target.value)} />
+            <input
+              type="text"
+              value={dateEnd || ""}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
           </label>
         </Form>
         <ButtonWrapper>
@@ -291,13 +348,14 @@ export function Report(props) {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
-              <tr key={item.acitivtyID}>
-                <Td>{item.uid}</Td>
-                <Td>{item.action}</Td>
-                <Td>{item.occuredAt}</Td>
-              </tr>
-            ))}
+            {items &&
+              items.map((item) => (
+                <tr key={item.acitivtyID}>
+                  <Td>{item.uid}</Td>
+                  <Td>{item.action}</Td>
+                  <Td>{item.occuredAt}</Td>
+                </tr>
+              ))}
           </tbody>
         </Table>
       </TableWrapper>
