@@ -24,6 +24,7 @@ import { Fridge } from "./Fridge";
 import { Admin } from "./Admin";
 import { Expiring } from "./Expiring";
 import { OrderManagement } from "./OrderManagement";
+import { useState } from "react";
 
 const AppContainer = styled.div`
   display: flex;
@@ -31,7 +32,11 @@ const AppContainer = styled.div`
   margin: 0;
   height: 100%;
   font-family: "Rubik";
-  background-image: linear-gradient(#0b132b, #1c2541, #00194a, #3a506b);
+  background-color: ${(props) => (props.isBackgroundChanged ? "black" : "")};
+  background-image: ${(props) =>
+    props.isBackgroundChanged
+      ? ""
+      : "linear-gradient(#0b132b, #1c2541, #00194a, #3a506b)"};
 `;
 
 const NavBarContainer = styled.div`
@@ -67,11 +72,11 @@ const MainContentContainer = styled.div`
   height: auto;
 `;
 
-function Layout({ children }) {
+function Layout({ children, handleBackgroundChange }) {
   return (
     <>
       <NavBarContainer>
-        <NavBar />
+        <NavBar onBackgroundChange={handleBackgroundChange} />
       </NavBarContainer>
       <SideBarAndContentContainer>
         <SideBarContainer>
@@ -104,6 +109,7 @@ const Redirect = () => {
 };
 
 function App() {
+  const [isBackgroundChanged, setBackgroundChanged] = useState(false);
   useEffect(() => {
     WebFont.load({
       google: {
@@ -111,10 +117,14 @@ function App() {
       },
     });
   }, []);
+
+  const handleBackgroundChange = () => {
+    setBackgroundChanged(!isBackgroundChanged);
+  };
   return (
     <PopupProvider>
       <UserProvider>
-        <AppContainer>
+        <AppContainer isBackgroundChanged={isBackgroundChanged}>
           <Popup />
           <Router>
             <Routes>
@@ -125,7 +135,7 @@ function App() {
                 element={
                   <>
                     <Redirect />
-                    <Layout>
+                    <Layout handleBackgroundChange={handleBackgroundChange}>
                       <MainContentContainer>
                         <Routes>
                           <Route path="/dashboard" element={<Dashboard />} />

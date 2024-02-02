@@ -1,8 +1,11 @@
 import styled from "styled-components";
 import { IoLogOut } from "react-icons/io5";
 import { IoIosNotifications } from "react-icons/io";
+import { FaCircleHalfStroke } from "react-icons/fa6";
 import { useUser } from "../UserContext";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import AppContainer from "../App";
 
 const NavBarWrapper = styled.div`
   display: flex;
@@ -83,9 +86,41 @@ const NotificationsText = styled.p`
   color: white;
 `;
 
-export function NavBar(props) {
+const ExposureWrapper = styled.div`
+  display: flex;
+  width: 150px;
+  justify-content: center;
+  margin-right: 15px;
+  margin-left: 15px;
+  flex-direction: row;
+  align-items: center;
+  transition: transform 250ms;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.125);
+  border-radius: 10px;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:hover::after {
+    transition: transform 250ms;
+    transform: scale(1);
+  }
+`;
+
+const ExposureText = styled.p`
+  padding-left: 5px;
+  color: white;
+`;
+
+export function NavBar({ onBackgroundChange }) {
   const { resetUserData } = useUser();
   const navigate = useNavigate();
+
+  const backgroundChange = () => {
+    onBackgroundChange();
+  };
 
   const logout = () => {
     document.cookie = `accessPIN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
@@ -103,6 +138,10 @@ export function NavBar(props) {
         <span className="smart">smart.</span>
       </NavTitle>
       <NavButtonsWrapper>
+        <ExposureWrapper onClick={backgroundChange}>
+          <FaCircleHalfStroke color="white" opacity={0.8} size={25} />
+          <ExposureText>Exposure</ExposureText>
+        </ExposureWrapper>
         <NotificationsWrapper onClick={report}>
           <IoIosNotifications color="white" opacity={0.8} size={25} />
           <NotificationsText>Notifications</NotificationsText>
