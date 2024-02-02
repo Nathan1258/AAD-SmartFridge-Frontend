@@ -156,6 +156,16 @@ const AddActivityComponent = ({
   const { triggerPopup } = usePopup();
 
   const handleAddAction = ({}) => {
+    if (!action.trim()) {
+      triggerPopup("Error", "Action cannot be empty", "Close");
+      return;
+    }
+
+    if (uid.trim() !== "" && !Number.isInteger(parseInt(uid))) {
+      triggerPopup("Error", "User ID must be a valid integer", "Close");
+      return;
+    }
+
     logAction(action, uid)
       .then((data) => {
         console.log("Action logged successfully:", data);
