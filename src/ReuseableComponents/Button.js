@@ -13,13 +13,12 @@ const StyledButton = styled.button`
   margin: 5px;
   width: ${(props) => props.width || "auto"};
   height: ${(props) => props.height || "auto"};
+  align-self: ${(props) => props.alignSelf || "auto"};
   transition: transform 250ms;
-  margin: ${(props) => props.margin || "0"};
 
   &:hover {
     transform: scale(1.1);
   }
-
   &:hover::after {
     transition: transform 250ms;
     transform: scale(1);
@@ -33,7 +32,7 @@ const Button = ({
   height,
   color,
   backgroundcolor,
-  margin,
+  alignSelf,
 }) => {
   return (
     <StyledButton
@@ -42,7 +41,7 @@ const Button = ({
       height={height}
       color={color}
       backgroundcolor={backgroundcolor}
-      margin={margin}
+      alignSelf={alignSelf}
     >
       {children}
     </StyledButton>

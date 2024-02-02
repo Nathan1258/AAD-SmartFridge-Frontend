@@ -92,13 +92,111 @@ const Form = styled.form`
   }
 `;
 
+const ActivityForm = styled.form`
+  margin-top: 10px;
+  align-self: center;
+  width: 300px;
+
+  label {
+    color: white;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  input {
+    width: 100%;
+    height: 15px;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    outline: none;
+    border: 2px solid #ddd;
+  }
+
+  input:focus {
+    border-color: #00bcd4; /* Change the border color when the input is in focus */
+  }
+`;
+
+const Overlay = styled.div`
+  display: ${(props) => (props.overlayState ? "block" : "none")};
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+`;
+
+const AddDiv = styled.div`
+  display: ${(props) => (props.addButtonState ? "flex" : "none")};
+  flex-direction: column;
+  width: 600px;
+  height: 400px;
+  background-color: #29323f;
+  position: absolute;
+  top: 100px;
+  align-self: center;
+  z-index: 999;
+  border-radius: 10px;
+  padding: 15px;
+  top: 25%;
+`;
+
+const AddActivityComponent = ({
+  overlayState,
+  addActivity,
+  addButtonState,
+}) => {
+  const [action, setAction] = useState("");
+  const [uid, setUid] = useState();
+
+  return (
+    <>
+      <Overlay overlayState={overlayState}></Overlay>
+      <AddDiv addButtonState={addButtonState}>
+        <Button alignSelf={"flex-end"} width={"90px"} onClick={addActivity}>
+          Close
+        </Button>
+        <ActivityForm>
+          <label>
+            Action:
+            <input
+              style={{
+                height: "30px",
+                overflowY: "scroll",
+              }}
+              type="textarea"
+              onChange={(e) => setAction(e.target.value)}
+            />
+          </label>
+          <label>
+            User ID (Optional):
+            <input type="number" onChange={(e) => setUid(e.target.value)} />
+          </label>
+        </ActivityForm>
+        <Button
+          alignSelf={"center"}
+          width={"140px"}
+          backgroundcolor={"#61ff69"}
+        >
+          Log Action
+        </Button>
+      </AddDiv>
+    </>
+  );
+};
+
 export function Report(props) {
   const [items, setItems] = useState([]);
   const [dateStart, setStartDate] = useState();
   const [dateEnd, setEndDate] = useState();
-  const { triggerPopup } = usePopup();
+  const [overlayState, setOverlay] = useState(false);
+  const [addButtonState, setState] = useState(false);
 
-  const handleButtonClick = async () => {
+  const updateTable = async () => {
     try {
       const data = await getActivityLog(dateStart, dateEnd);
       setItems(data);
@@ -107,8 +205,10 @@ export function Report(props) {
     }
   };
 
-  const addActivity = ({}) => {
-    triggerPopup("Add Activity");
+  const addActivity = () => {
+    console.log("test");
+    setState(!addButtonState);
+    setOverlay(!overlayState);
     return;
   };
 
@@ -116,6 +216,11 @@ export function Report(props) {
     <ReportWrapper>
       <Title>Report</Title>
       <SubTitle>Generate Reports</SubTitle>
+      <AddActivityComponent
+        addButtonState={addButtonState}
+        addActivity={addActivity}
+        overlayState={overlayState}
+      />
       <InputWrapper>
         <Form>
           <label>
@@ -131,7 +236,7 @@ export function Report(props) {
           </label>
         </Form>
         <ButtonWrapper>
-          <Button width={"140px"} height={"40px"} onClick={handleButtonClick}>
+          <Button width={"140px"} height={"40px"} onClick={updateTable}>
             Generate
           </Button>
           <Button width={"140px"} height={"40px"} onClick={addActivity}>
