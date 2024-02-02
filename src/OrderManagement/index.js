@@ -113,7 +113,7 @@ const Overlay = styled.div`
   z-index: 999;
 `;
 
-function onEdit(product, triggerPopup) {
+function onEdit(product, triggerPopup, getOrderedProducts) {
   let originalQuantity = product.quantity;
   let quantityLocal = product.quantity;
 
@@ -135,7 +135,7 @@ function onEdit(product, triggerPopup) {
               `${product.Name} now has a new quantity of ${quantityLocal}.`,
               "Okay",
               () => {
-                window.location.reload();
+                getOrderedProducts();
               },
             );
           } else {
@@ -144,7 +144,7 @@ function onEdit(product, triggerPopup) {
               `${product.Name} could not be saved. Please try again later.`,
               "Okay",
               () => {
-                window.location.reload();
+                getOrderedProducts();
               },
             );
           }
@@ -155,7 +155,7 @@ function onEdit(product, triggerPopup) {
             `${product.Name} could not be saved. Please try again later.`,
             "Okay",
             () => {
-              window.location.reload();
+              getOrderedProducts();
             },
           );
         });
@@ -163,7 +163,7 @@ function onEdit(product, triggerPopup) {
   );
 }
 
-function onRemove(product, triggerPopup) {
+function onRemove(product, triggerPopup, getOrderedProducts) {
   removeItemFromOrder(product)
     .then((response) => {
       if (response.code !== 200) {
@@ -172,7 +172,7 @@ function onRemove(product, triggerPopup) {
           `Unable to remove ${product.Name} from this week's order. Please try again.`,
           "Okay",
           () => {
-            window.location.reload();
+            getOrderedProducts();
           },
         );
       }
@@ -181,7 +181,7 @@ function onRemove(product, triggerPopup) {
         `${product.Name} has been removed from this week's order`,
         "Okay",
         () => {
-          window.location.reload();
+          getOrderedProducts();
         },
       );
     })
@@ -191,13 +191,18 @@ function onRemove(product, triggerPopup) {
         `Unable to remove ${product.Name} from this week's order. Please try again.`,
         "Okay",
         () => {
-          window.location.reload();
+          getOrderedProducts();
         },
       );
     });
 }
 
-function OrderedProducts(orderedProducts, isLoading, triggerPopup) {
+function OrderedProducts({
+  orderedProducts,
+  isLoading,
+  triggerPopup,
+  getOrderedProducts,
+}) {
   return (
     <>
       {isLoading ? (
@@ -227,13 +232,17 @@ function OrderedProducts(orderedProducts, isLoading, triggerPopup) {
                   <td>
                     <MdEdit
                       style={{ cursor: "pointer", fontSize: "25px" }}
-                      onClick={() => onEdit(product, triggerPopup)}
+                      onClick={() =>
+                        onEdit(product, triggerPopup, getOrderedProducts)
+                      }
                     />
                   </td>
                   <td>
                     <IoIosRemoveCircle
                       style={{ cursor: "pointer", fontSize: "25px" }}
-                      onClick={() => onRemove(product, triggerPopup)}
+                      onClick={() =>
+                        onRemove(product, triggerPopup, getOrderedProducts)
+                      }
                     />
                   </td>
                 </tr>
@@ -254,6 +263,10 @@ export function OrderManagement(props) {
   const [totalCost, setTotalCost] = useState("");
 
   useEffect(() => {
+    getOrderedProducts();
+  }, []);
+
+  const getOrderedProducts = () => {
     getAllOrderedProducts()
       .then((data) => {
         setOrderedProducts(data.data);
@@ -270,7 +283,7 @@ export function OrderManagement(props) {
           },
         );
       });
-  }, []);
+  };
 
   const [duration, setDuration] = useState("");
   const calculateDuration = () => {
@@ -332,7 +345,12 @@ export function OrderManagement(props) {
         Manage order for week {getOrder()[0]} of {getOrder()[1]}
       </SubTitle>
       <SubTitle>You have {duration} left to edit this order.</SubTitle>
-      {OrderedProducts(orderedProducts, isLoading, triggerPopup)}
+      <OrderedProducts
+        orderedProducts={orderedProducts}
+        isLoading={isLoading}
+        triggerPopup={triggerPopup}
+        getOrderedProducts={getOrderedProducts}
+      />
       <SubTitle>Total cost of this order: £{totalCost}</SubTitle>
     </OrderManagementWrapper>
   );
