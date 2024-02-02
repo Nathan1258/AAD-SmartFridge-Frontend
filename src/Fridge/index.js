@@ -123,7 +123,12 @@ const Form = styled.form`
 `;
 
 //Add Items
-const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
+const AddComponent = ({
+  addButtonState,
+  AddButton,
+  overlayState,
+  updateTable,
+}) => {
   const [itemID, setItemID] = useState();
   const [quantity, setQuantity] = useState();
   const [expiryDate, setExpiryDate] = useState("");
@@ -152,6 +157,7 @@ const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
       .then((data) => {
         console.log("Item added successfully:", data);
         triggerPopup("Item Added", "You have successfully added item", "Close");
+        updateTable();
       })
       .catch((error) => {
         console.error("Error adding item:", error);
@@ -200,7 +206,12 @@ const AddComponent = ({ addButtonState, AddButton, overlayState }) => {
 };
 
 // Remove Items
-const RemoveComponent = ({ removeButtonState, RemoveButton, overlayState }) => {
+const RemoveComponent = ({
+  removeButtonState,
+  RemoveButton,
+  overlayState,
+  updateTable,
+}) => {
   const [itemID, setItemID] = useState();
   const [quantity, setQuantity] = useState();
   const { triggerPopup } = usePopup();
@@ -222,6 +233,7 @@ const RemoveComponent = ({ removeButtonState, RemoveButton, overlayState }) => {
           "You have successfully removed item",
           "Close"
         );
+        updateTable();
       })
       .catch((error) => {
         console.error("Error removing item:", error);
@@ -274,6 +286,15 @@ export function Fridge() {
       .catch((error) => console.error(error));
   }, []);
 
+  const updateTable = async () => {
+    try {
+      const data = await getAllItemsInStock();
+      setItems(data);
+    } catch (error) {
+      console.error("Error fetching fridge inventory:", error);
+    }
+  };
+
   function AddButton() {
     setState(!addButtonState);
     setOverlay(!overlayState);
@@ -292,10 +313,12 @@ export function Fridge() {
         addButtonState={addButtonState}
         AddButton={AddButton}
         overlayState={overlayState}
+        updateTable={updateTable}
       />
       <RemoveComponent
         removeButtonState={removeButtonState}
         RemoveButton={RemoveButton}
+        updateTable={updateTable}
       ></RemoveComponent>
       <TableWrapper>
         <Table>
