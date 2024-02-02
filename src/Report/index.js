@@ -174,6 +174,8 @@ const AddActivityComponent = ({
           "You have successfully logged an action",
           "Close"
         );
+        setUid("");
+        setAction("");
         updateTable();
       })
       .catch((error) => {
@@ -198,12 +200,17 @@ const AddActivityComponent = ({
                 overflowY: "scroll",
               }}
               type="textarea"
+              value={action}
               onChange={(e) => setAction(e.target.value)}
             />
           </label>
           <label>
             User ID (Optional):
-            <input type="number" onChange={(e) => setUid(e.target.value)} />
+            <input
+              type="number"
+              value={uid}
+              onChange={(e) => setUid(e.target.value)}
+            />
           </label>
         </ActivityForm>
         <Button
