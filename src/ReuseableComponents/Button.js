@@ -26,6 +26,13 @@ const StyledButton = styled.button`
     transition: transform 250ms;
     transform: scale(1);
   }
+
+  &:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
 `;
 
 const Button = ({
@@ -35,6 +42,7 @@ const Button = ({
   height,
   color,
   backgroundcolor,
+  isDisabled = false,
   shadow = false,
   margin,
 }) => {
@@ -47,6 +55,8 @@ const Button = ({
       backgroundcolor={backgroundcolor}
       margin={margin}
       shadow={shadow}
+      disabled={isDisabled}
+      isDisabled={isDisabled}
     >
       {children}
     </StyledButton>

@@ -1,16 +1,22 @@
 import styled from "styled-components";
 import Loading from "../ReuseableComponents/Loading";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePopup } from "../Popup/popupContext";
 import {
   editItemFromOrder,
+  getAllItemsInDelivery,
   getAllOrderedProducts,
+  getDeliveries,
+  getDeliveryOrderItems,
   getExpiringProducts,
+  getPastDeliveries,
   removeItemFromOrder,
 } from "../API";
 import { MdEdit } from "react-icons/md";
 import { IoIosRemoveCircle } from "react-icons/io";
 import Counter from "../ReuseableComponents/Counter";
+import { hover } from "@testing-library/user-event/dist/hover";
+import Button from "../ReuseableComponents/Button";
 
 const OrderManagementWrapper = styled.div`
   display: flex;
@@ -124,7 +130,7 @@ function onEdit(product, triggerPopup, getOrderedProducts) {
   triggerPopup(
     `Edit the quantity of ${product.Name}`,
     <Counter value={originalQuantity} onValueChange={handleQuantityChange} />,
-    originalQuantity == quantityLocal ? "Save" : "Save",
+    originalQuantity === quantityLocal ? "Save" : "Save",
     () => {
       if (originalQuantity === quantityLocal) return;
       editItemFromOrder(product, quantityLocal)
@@ -255,15 +261,238 @@ function OrderedProducts({
   );
 }
 
+function PastDeliveries({
+  pastDeliveries,
+  isLoading,
+  triggerPopup,
+  getPastDeliveries,
+  handleDeliveryClick,
+}) {
+  return (
+    <>
+      {isLoading ? (
+        <Loading>Fetching Deliveries...</Loading>
+      ) : (
+        <TableContainer>
+          <Table>
+            <thead>
+              <tr className="header">
+                <th className={"firstHeader"}>Order ID</th>
+                <th>Delivery Date</th>
+                <th>Items to be delivered</th>
+                <th>Total Cost</th>
+                <th>Status</th>
+                <th>Delivered</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pastDeliveries.map((delivery) => (
+                <tr
+                  className={"itemRow"}
+                  key={delivery.orderID}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleDeliveryClick(delivery)}
+                >
+                  <td>{delivery.orderID}</td>
+                  <td>{formatDateToReadable(delivery.deliveryDate)}</td>
+                  <td>{delivery.itemsToDeliver}</td>
+                  <td>{delivery.totalCost}</td>
+                  <td
+                    style={
+                      delivery.status === "Delivered"
+                        ? { color: "red", fontWeight: "bold" }
+                        : null
+                    }
+                  >
+                    {delivery.isDelivered === 1 && delivery.isChecked === 0
+                      ? "Delivered - Action required"
+                      : delivery.status}
+                  </td>
+                  <td>
+                    {delivery.isDelivered && delivery.isChecked === 0
+                      ? "Yes"
+                      : "No"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </TableContainer>
+      )}
+    </>
+  );
+}
+
+function ItemsInOrder({ itemsInDelivery, isLoading, setButtonDisabled }) {
+  const checkAllBoxesChecked = () => {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const allChecked = Array.from(checkboxes).every(
+      (checkbox) => checkbox.checked,
+    );
+    setButtonDisabled(!allChecked);
+  };
+
+  useEffect(() => {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", checkAllBoxesChecked);
+    });
+
+    return () => {
+      checkboxes.forEach((checkbox) => {
+        checkbox.removeEventListener("change", checkAllBoxesChecked);
+      });
+    };
+  }, [itemsInDelivery]);
+
+  return (
+    <>
+      {isLoading ? (
+        <Loading>Fetching items...</Loading>
+      ) : (
+        <TableContainer>
+          <Table>
+            <thead>
+              <tr className="header">
+                <th className={"firstHeader"}>Product Name</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th>Correct</th>
+              </tr>
+            </thead>
+            <tbody>
+              {itemsInDelivery.map((item) => (
+                <tr key={item.productID} style={{ color: "black" }}>
+                  <td>{item.Name}</td>
+                  <td>{item.quantity}</td>
+                  <td
+                    style={
+                      item.status === "Undelivered"
+                        ? { color: "red", fontWeight: "bold" }
+                        : null
+                    }
+                  >
+                    {item.status}
+                  </td>
+                  <td>
+                    <input type={"checkbox"}></input>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </TableContainer>
+      )}
+    </>
+  );
+}
+
+function Delivery({ delivery, triggerPopup }) {
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [itemsInDelivery, setItemsInDelivery] = useState([]);
+  const [isItemsInDeliveryLoading, setItemsInDeliveryLoading] = useState(true);
+
+  const DeliveryWrapper = styled.div`
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+  `;
+
+  const DeliveryInfo = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: auto;
+    justify-content: space-between;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(5px);
+  `;
+
+  const Title = styled.h1`
+    margin: 0;
+  `;
+
+  const SubTitle = styled.h3`
+    margin: 0;
+  `;
+
+  const Body = styled.p`
+    margin-top: 10px;
+    font-weight: bold;
+  `;
+
+  useEffect(() => {
+    getAllItemsInDelivery(delivery.orderID)
+      .then((data) => {
+        setItemsInDelivery(data.data);
+        setItemsInDeliveryLoading(false);
+      })
+      .catch(() => {
+        triggerPopup(
+          "There was an error",
+          "We ran into an error fetching items in this delivery. Please try again soon",
+          "Okay",
+          () => {
+            window.location.reload();
+          },
+        );
+      });
+  }, []);
+
+  return (
+    <>
+      <DeliveryWrapper>
+        <DeliveryInfo>
+          <SubTitle style={{ marginTop: "5px" }}>Driver's Notes:</SubTitle>
+          <Body>{delivery.deliveryNotes}</Body>
+        </DeliveryInfo>
+        {delivery.isChecked === 0 && delivery.itemsUndelivered >= 1 ? (
+          <Body style={{ color: "red" }}>
+            {delivery.itemsUndelivered === 1
+              ? delivery.itemsUndelivered + " item was"
+              : delivery.itemsUndelivered + " items were"}{" "}
+            recorded as not delivered and needs attention
+          </Body>
+        ) : (
+          <></>
+        )}
+        <ItemsInOrder
+          itemsInDelivery={itemsInDelivery}
+          isLoading={isItemsInDeliveryLoading}
+          setButtonDisabled={setButtonDisabled}
+        />
+        <Button
+          backgroundcolor={"black"}
+          color={"white"}
+          width={"150px"}
+          isDisabled={buttonDisabled}
+        >
+          Submit
+        </Button>
+      </DeliveryWrapper>
+    </>
+  );
+}
+
 export function OrderManagement(props) {
   const [orderedProducts, setOrderedProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [pastDeliveries, setPastDeliveries] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isPastDeliveriesLoading, setIsPastDeliveriesLoading] = useState(true);
   const { triggerPopup } = usePopup();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [totalCost, setTotalCost] = useState("");
 
   useEffect(() => {
     getOrderedProducts();
+    getPastDeliveries();
   }, []);
 
   const getOrderedProducts = () => {
@@ -277,6 +506,24 @@ export function OrderManagement(props) {
         triggerPopup(
           "There was an error fetching products",
           "We ran into an error fetching expiring products. Please try again soon",
+          "Okay",
+          () => {
+            window.location.reload();
+          },
+        );
+      });
+  };
+
+  const getPastDeliveries = () => {
+    getDeliveries()
+      .then((data) => {
+        setPastDeliveries(data.data);
+        setIsPastDeliveriesLoading(false);
+      })
+      .catch((error) => {
+        triggerPopup(
+          "There was an error fetching past deliveries",
+          "We ran into an error fetching past deliveries. Please try again soon",
           "Okay",
           () => {
             window.location.reload();
@@ -310,7 +557,7 @@ export function OrderManagement(props) {
       if (days === 0 && minutes > 0) durationString += `${minutes} minutes`;
       return durationString.trim();
     } else {
-      return "Time is up";
+      return "Now";
     }
   };
 
@@ -330,6 +577,14 @@ export function OrderManagement(props) {
       total = total + productPrice * productQuantity;
     });
     setTotalCost(total.toFixed(2));
+  };
+
+  const handleDeliveryClick = (delivery) => {
+    triggerPopup(
+      `Delivery for week ${delivery.orderID.toString().charAt(0)}`,
+      <Delivery delivery={delivery} triggerPopup={triggerPopup} />,
+      "null",
+    );
   };
 
   return (
@@ -352,6 +607,14 @@ export function OrderManagement(props) {
         getOrderedProducts={getOrderedProducts}
       />
       <SubTitle>Total cost of this order: £{totalCost}</SubTitle>
+      <Title style={{ marginTop: "10px" }}>Past deliveries</Title>
+      <PastDeliveries
+        pastDeliveries={pastDeliveries}
+        isLoading={isPastDeliveriesLoading}
+        triggerPopup={triggerPopup}
+        getPastDeliveries={getPastDeliveries}
+        handleDeliveryClick={handleDeliveryClick}
+      ></PastDeliveries>
     </OrderManagementWrapper>
   );
 }
@@ -363,4 +626,47 @@ function getOrder() {
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
   return [weekNo, d.getUTCFullYear()];
+}
+
+function formatDateToReadable(inputDate) {
+  const date = new Date(inputDate);
+
+  const day = date.getDate();
+  const monthIndex = date.getMonth();
+  const year = date.getFullYear();
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const daySuffix = getDaySuffix(day);
+  const formattedDate = `${day}${daySuffix}  ${months[monthIndex]}  ${year}`;
+  return `${formattedDate}`;
+}
+
+function getDaySuffix(day) {
+  if (day >= 11 && day <= 13) {
+    return "th";
+  }
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
 }

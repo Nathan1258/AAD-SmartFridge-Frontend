@@ -58,13 +58,17 @@ const Popup = () => {
     <StyledPopup>
       <Title>{popupData.title}</Title>
       {renderContent()}
-      <Button
-        onClick={handleButtonClick}
-        backgroundcolor={"black"}
-        color={"white"}
-      >
-        {popupData.buttonText}
-      </Button>
+      {popupData.buttonText === "null" ? (
+        <></>
+      ) : (
+        <Button
+          onClick={handleButtonClick}
+          backgroundcolor={"black"}
+          color={"white"}
+        >
+          {popupData.buttonText}
+        </Button>
+      )}
     </StyledPopup>
   ) : null;
 };
