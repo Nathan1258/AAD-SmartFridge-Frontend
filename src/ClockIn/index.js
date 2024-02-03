@@ -53,6 +53,13 @@ const Subtitle = styled.h2`
   padding: 20px;
 `;
 
+const Text = styled.h4`
+  margin: 0;
+  text-align: center;
+  color: white;
+  padding: 20px;
+`;
+
 export function ClockIn(props) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -139,9 +146,9 @@ export function ClockIn(props) {
         <Line />
       </SubtitleWrapper>
       <Subtitle>Log in</Subtitle>
-      <p style={{ color: "white", margin: "0" }}>
+      <Text style={{ color: "white", margin: "0" }}>
         Please enter your access code here if you are a delivery driver
-      </p>
+      </Text>
       <Input
         width={"250px"}
         name="accessPIN"

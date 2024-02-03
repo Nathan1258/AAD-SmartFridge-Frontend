@@ -119,7 +119,10 @@ function App() {
           <Popup />
           <Router>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route
+                path="/"
+                element={<Navigate to="/app/dashboard" replace />}
+              />
               <Route path="/clock-in" element={<ClockIn />} />
               <Route path="/delivery" element={<Delivery />} />
               <Route path="*" element={<NoMatch />} />
