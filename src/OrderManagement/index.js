@@ -11,6 +11,7 @@ import {
   getExpiringProducts,
   getPastDeliveries,
   removeItemFromOrder,
+  setDeliveryIsChecked,
 } from "../API";
 import { MdEdit } from "react-icons/md";
 import { IoIosRemoveCircle } from "react-icons/io";
@@ -473,6 +474,7 @@ function Delivery({ delivery, triggerPopup }) {
           color={"white"}
           width={"150px"}
           isDisabled={buttonDisabled}
+          onClick={setDeliveryIsChecked}
         >
           Submit
         </Button>

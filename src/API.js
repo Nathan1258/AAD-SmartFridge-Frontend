@@ -170,6 +170,28 @@ export const getAllItemsInDelivery = (orderID) => {
   });
 };
 
+export const setDeliveryIsChecked = (orderID) => {
+  alert("IMPLEMENT");
+  // return new Promise((resolve, reject) => {
+  //   fetch("https://aad-api.ellisn.com/v1/delivery/order", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ accessPIN: getAccessPIN(), orderID: orderID }),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       if (data.code !== 200)
+  //         return reject(
+  //           "Your accessPIN is wrong or has expired. Please try again.",
+  //         );
+  //       return resolve(data);
+  //     })
+  //     .catch((error) => reject(error.message));
+  // });
+};
+
 export const getDeliveryOrderItems = (accessCode, orderID) => {
   return new Promise((resolve, reject) => {
     fetch("https://aad-api.ellisn.com/v1/delivery/final-order", {
