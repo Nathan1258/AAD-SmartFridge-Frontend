@@ -10,6 +10,8 @@ const StyledButton = styled.button`
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
+  box-shadow: ${(props) =>
+    props.shadow ? "0px 4px 8px rgba(0, 0, 0, 0.5)" : "none"};
   margin: 5px;
   width: ${(props) => props.width || "auto"};
   height: ${(props) => props.height || "auto"};
@@ -33,6 +35,7 @@ const Button = ({
   height,
   color,
   backgroundcolor,
+  shadow = false,
   margin,
 }) => {
   return (
@@ -43,6 +46,7 @@ const Button = ({
       color={color}
       backgroundcolor={backgroundcolor}
       margin={margin}
+      shadow={shadow}
     >
       {children}
     </StyledButton>

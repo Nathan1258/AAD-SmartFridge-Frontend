@@ -73,8 +73,7 @@ export function ClockIn(props) {
   }, [location, triggerPopup]);
 
   const redirectBack = () => {
-    const from = location.state?.from || "/dashboard";
-    console.log(from);
+    const from = location.state?.from || "/app/dashboard";
     navigate(from);
   };
 
@@ -96,12 +95,17 @@ export function ClockIn(props) {
   }
 
   function handleLogIn() {
-    console.log("Logging in...");
     verifyPIN(accessPIN)
-      .then((validatedPIN) => {
-        console.log(validatedPIN);
-        document.cookie = "accessPIN=" + validatedPIN + ";path=/";
-        redirectBack();
+      .then((response) => {
+        console.log(response);
+        if (response.data) {
+          document.cookie =
+            "accessCode=" + response.data.accessCode + ";path=/";
+          navigate("/delivery", { state: { data: response.data } });
+        } else {
+          document.cookie = "accessPIN=" + response + ";path=/";
+          redirectBack();
+        }
       })
       .catch((errorMessage) => {
         triggerPopup("Ooops...", errorMessage, "Okay");
@@ -135,6 +139,9 @@ export function ClockIn(props) {
         <Line />
       </SubtitleWrapper>
       <Subtitle>Log in</Subtitle>
+      <p style={{ color: "white", margin: "0" }}>
+        Please enter your access code here if you are a delivery driver
+      </p>
       <Input
         width={"250px"}
         name="accessPIN"

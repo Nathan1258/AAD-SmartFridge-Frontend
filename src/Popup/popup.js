@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { usePopup } from "./popupContext";
 import Button from "../ReuseableComponents/Button";
+import { media } from "../Media";
 
 const StyledPopup = styled.div`
   display: flex;
@@ -19,6 +20,18 @@ const StyledPopup = styled.div`
   width: 30%;
   padding: 20px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+
+  @media ${media.mobile} {
+    width: 80%;
+  }
+
+  @media ${media.tablet} {
+    width: 70%;
+  }
+
+  @media ${media.desktop} {
+    width: 30%;
+  }
 `;
 
 const Title = styled.h1``;

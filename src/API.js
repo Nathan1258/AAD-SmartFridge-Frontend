@@ -149,9 +149,65 @@ export const getAllOrderedProducts = () => {
   });
 };
 
+export const getDeliveryOrderItems = (accessCode, orderID) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/delivery/final-order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ accessPIN: accessCode, orderID: orderID }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code !== 200)
+          return reject(
+            "Your accessPIN is wrong or has expired. Please try again.",
+          );
+        return resolve(data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
+export const markAsDelivered = (
+  accessPIN,
+  deliveryID,
+  orderID,
+  deliveredItems,
+  undeliveredItems,
+  deliveryNotes,
+) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/delivery/delivered", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessPIN: accessPIN,
+        orderID: orderID,
+        deliveryID: deliveryID,
+        deliveredItems: deliveredItems,
+        undeliveredItems: undeliveredItems,
+        deliveryNotes: deliveryNotes,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code !== 200)
+          return reject(
+            "Your accessPIN is wrong or has expired. Please try again.",
+          );
+        return resolve(data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
 export const verifyPIN = (accessPIN) => {
   return new Promise((resolve, reject) => {
-    fetch("https://aad-api.ellisn.com/v1/users/verifyAccessToken", {
+    return fetch("https://aad-api.ellisn.com/v1/users/verifyAccessToken", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -160,11 +216,37 @@ export const verifyPIN = (accessPIN) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.code !== 200)
-          return reject(
-            "Your accessPIN is wrong or has expired. Please try again.",
-          );
+        if (data.code !== 200) {
+          return verifyDeliveryPIN(accessPIN)
+            .then((deliveryData) => {
+              console.log(deliveryData);
+              return resolve(deliveryData);
+            })
+            .catch((error) => {
+              return reject(
+                "Your accessPIN is wrong or has expired. Please try again.",
+              );
+            });
+        }
         return resolve(accessPIN);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
+export const verifyDeliveryPIN = (accessPIN) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/delivery/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ accessPIN: accessPIN }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code != 200) return reject("Could not get delivery");
+        return resolve(data);
       })
       .catch((error) => reject(error.message));
   });
