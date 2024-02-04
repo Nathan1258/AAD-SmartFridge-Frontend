@@ -65,8 +65,8 @@ const NavBarContainer = styled.div`
   height: 10%;
   box-shadow: ${(props) =>
     props.isBackgroundChanged
-      ? "0px 0px 10px rgba(255, 255, 255, 0.5)"
-      : "0px 0px 10px rgba(0, 0, 0, 0.5)"};
+      ? "0px 0px 10px rgba(255, 255, 255, 0.3)"
+      : "2px 4px 10px rgba(0, 0, 0, 0.5)"};
 `;
 
 const SideBarAndContentContainer = styled.div`
@@ -83,7 +83,10 @@ const SideBarContainer = styled.div`
   height: auto;
   width: auto;
   padding: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: ${(props) =>
+    props.isBackgroundChanged
+      ? "2px 4px 10px rgba(255, 255, 255, 0.3)"
+      : "2px 4px 10px rgba(0, 0, 0, 0.5)"};
 `;
 
 const MainContentContainer = styled.div`
@@ -93,14 +96,14 @@ const MainContentContainer = styled.div`
   height: auto;
 `;
 
-function Layout({ children, handleBackgroundChange }) {
+function Layout({ children, handleBackgroundChange, isBackgroundChanged }) {
   return (
     <>
-      <NavBarContainer>
+      <NavBarContainer isBackgroundChanged={isBackgroundChanged}>
         <NavBar onBackgroundChange={handleBackgroundChange} />
       </NavBarContainer>
       <SideBarAndContentContainer>
-        <SideBarContainer>
+        <SideBarContainer isBackgroundChanged={isBackgroundChanged}>
           <SideBar />
         </SideBarContainer>
         {children}
@@ -154,8 +157,8 @@ function App() {
   return (
     <PopupProvider>
       <UserProvider>
+        <Popup />
         <AppContainer isBackgroundChanged={isBackgroundChanged}>
-          <Popup />
           <Router>
             <Routes>
               <Route
@@ -170,7 +173,10 @@ function App() {
                 element={
                   <>
                     <Redirect />
-                    <Layout handleBackgroundChange={handleBackgroundChange}>
+                    <Layout
+                      handleBackgroundChange={handleBackgroundChange}
+                      isBackgroundChanged={isBackgroundChanged}
+                    >
                       <MainContentContainer>
                         <Routes>
                           <Route path="/dashboard" element={<Dashboard />} />

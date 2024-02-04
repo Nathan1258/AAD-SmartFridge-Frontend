@@ -1,14 +1,15 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import { getActivityLog, logAction } from "../API";
+import { getActivityLog, logAction, logActionNoUID } from "../API";
 import Button from "../ReuseableComponents/Button";
 import { Popup, PopupProvider } from "../Popup/popup";
 import { usePopup } from "../Popup/popupContext";
+import DropdownSelector from "../ReuseableComponents/DropdownSelector";
+import Input from "../ReuseableComponents/Input";
 
 const ReportWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
   width: 100%;
   margin: 0;
 `;
@@ -20,345 +21,395 @@ const Title = styled.h1`
 `;
 
 const SubTitle = styled.h4`
-  margin: 0;
-  padding-top: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   color: white;
 `;
 
-const InputWrapper = styled.div`
+const NotificationsTodayWrapper = styled.div`
   display: flex;
-  margin-top: 40px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  column-gap: 40px;
+  flex-direction: column;
+  width: 95%;
+  height: auto;
+  justify-content: space-between;
+  margin: 20px;
+  background: rgba(255, 255, 255, 0.125);
   border-radius: 10px;
-  border: 2px solid #ddd;
-  width: 90%;
-  align-self: center;
+  padding: 15px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
 `;
 
-const ButtonWrapper = styled.div`
+const CustomNotificationsWrapper = styled.div`
   display: flex;
-  justify-content: center;
-  column-gap: 10px;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-bottom: 20px;
 `;
 
-const TableWrapper = styled.div`
-  display: flex;
-  margin-top: 20px;
-  width: 90%;
-  border-radius: 10px;
-  max-height: 300px;
-  overflow: auto;
-  border: 2px solid #ddd;
-  align-self: center;
-`;
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   color: white;
-  max-height: 400px;
-  overflow-y: auto;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: visible;
+  margin-top: 15px;
+
+  th,
+  td {
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background: #2c3f56;
+    color: white;
+    cursor: pointer;
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+  }
+
+  .firstHeader {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+
+  .itemRow {
+    &:hover {
+      background: rgba(255, 255, 255, 0.5);
+      color: black;
+    }
+  }
+
+  td {
+    padding: 15px;
+  }
+`;
+const TableContainer = styled.div`
+  width: 100%;
+  overflow-x: auto;
 `;
 
-const Td = styled.td`
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: center;
-`;
-
-const Form = styled.form`
-  margin-top: 10px;
-  width: 300px;
+const DateFiltersWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 30px;
-
-  label {
-    color: white;
-    display: block;
-    margin-bottom: 10px;
-  }
-
-  input {
-    border-radius: 10px;
-    outline: none;
-    border: 2px solid #ddd;
-  }
-
-  input:focus {
-    border-color: #00bcd4;
-  }
-`;
-
-const ActivityForm = styled.form`
-  margin-top: 10px;
-  align-self: center;
-  width: 300px;
-
-  label {
-    color: white;
-    display: block;
-    margin-bottom: 10px;
-  }
-
-  input {
-    width: 100%;
-    height: 15px;
-    padding: 5px;
-    margin-top: 10px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    outline: none;
-    border: 2px solid #ddd;
-  }
-
-  input:focus {
-    border-color: #00bcd4; /* Change the border color when the input is in focus */
-  }
-`;
-
-const Overlay = styled.div`
-  display: ${(props) => (props.overlayState ? "block" : "none")};
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 998;
+  align-items: center;
+  margin-bottom: 50px;
 `;
 
-const AddDiv = styled.div`
-  display: ${(props) => (props.addButtonState ? "flex" : "none")};
+const DateRange = styled.div`
+  display: flex;
   flex-direction: column;
-  width: 600px;
-  height: 400px;
-  background-color: #29323f;
-  position: absolute;
-  top: 100px;
-  align-self: center;
-  z-index: 999;
-  border-radius: 10px;
-  padding: 15px;
-  top: 25%;
+  align-items: flex-start;
+  margin-right: 20px;
+  margin-left: 20px;
 `;
-
-const AddActivityComponent = ({
-  overlayState,
-  addActivity,
-  addButtonState,
-  updateTable,
-}) => {
-  const [action, setAction] = useState("");
-  const [uid, setUid] = useState();
-  const { triggerPopup } = usePopup();
-
-  const handleAddAction = ({}) => {
-    if (!action.trim()) {
-      triggerPopup("Error", "Action cannot be empty", "Close");
-      return;
-    }
-
-    if (uid.trim() !== "" && !Number.isInteger(parseInt(uid))) {
-      triggerPopup("Error", "User ID must be a valid integer", "Close");
-      return;
-    }
-
-    logAction(action, uid)
-      .then((data) => {
-        console.log("Action logged successfully:", data);
-        triggerPopup(
-          "Action Logged",
-          "You have successfully logged an action",
-          "Close"
-        );
-        setUid("");
-        setAction("");
-        updateTable();
-      })
-      .catch((error) => {
-        console.error("Error adding item:", error);
-        triggerPopup("Error", error, "Close");
-      });
-  };
-
-  return (
-    <>
-      <Overlay overlayState={overlayState}></Overlay>
-      <AddDiv addButtonState={addButtonState}>
-        <Button alignSelf={"flex-end"} width={"90px"} onClick={addActivity}>
-          Close
-        </Button>
-        <ActivityForm>
-          <label>
-            Action:
-            <input
-              style={{
-                height: "30px",
-                overflowY: "scroll",
-              }}
-              type="textarea"
-              value={action}
-              onChange={(e) => setAction(e.target.value)}
-            />
-          </label>
-          <label>
-            User ID (Optional):
-            <input
-              type="number"
-              value={uid}
-              onChange={(e) => setUid(e.target.value)}
-            />
-          </label>
-        </ActivityForm>
-        <Button
-          alignSelf={"center"}
-          width={"140px"}
-          backgroundcolor={"#61ff69"}
-          onClick={handleAddAction}
-        >
-          Log Action
-        </Button>
-      </AddDiv>
-    </>
-  );
-};
 
 export function Report(props) {
-  const [items, setItems] = useState([]);
-  const [dateStart, setStartDate] = useState();
-  const [dateEnd, setEndDate] = useState();
-  const [overlayState, setOverlay] = useState(false);
-  const [addButtonState, setState] = useState(false);
+  const [todayNotifications, setTodayNotifications] = useState([]);
+  const [customRangeNotification, setCustomRangeNotifications] = useState([]);
+  const [startDate, setStartDate] = useState("");
+  const today = new Date().toISOString().split("T")[0];
+  const [endDate, setEndDate] = useState(today);
+
+  const [uid, setUID] = useState("");
+  const [action, setAction] = useState("");
+  const now = new Date();
+  const startDateNow =
+    new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
+  const endDateNow =
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      23,
+      59,
+      59,
+      999,
+    ).getTime() / 1000;
+
   const { triggerPopup } = usePopup();
 
-  const isValidDate = (input) => {
-    const dateRegex = /^\d{2}-\d{2}-\d{2}$/;
-    return dateRegex.test(input);
+  useEffect(() => {
+    getTodayActivityLog();
+  }, []);
+
+  const getTodayActivityLog = () => {
+    getActivityLog(startDateNow, endDateNow).then((data) => {
+      if (data.code === 200) {
+        setTodayNotifications(data.data);
+      } else {
+        triggerPopup(
+          "Unable to get notifications",
+          "An error occurred fetching today's notifications. Please try again",
+        );
+      }
+    });
   };
 
-  const convertToUnix = (inputDate) => {
-    if (!inputDate) {
-      return null;
-    }
-
-    const [day, month, year] = inputDate.split("-");
-    const formattedDate = `20${year}-${month}-${day}T00:00:00Z`;
-    const unixTime = new Date(formattedDate).getTime();
-    if (isNaN(unixTime)) {
-      return null;
-    }
-    return Math.floor(unixTime / 1000);
-  };
-
-  const updateTable = async () => {
-    if ((dateStart && !dateEnd) || (!dateStart && dateEnd)) {
-      triggerPopup("Error", "Please provide both start and end dates", "Close");
-      return;
-    }
-
-    if (dateStart && !isValidDate(dateStart)) {
+  const handleGeneration = () => {
+    if (!startDate || !endDate) {
       triggerPopup(
-        "Error",
-        "Start date must be in the format dd-mm-yy",
-        "Close"
+        "You need to fill in both dates",
+        "You need to enter both range dates to generate a report.",
       );
       return;
     }
-
-    if (dateEnd && !isValidDate(dateEnd)) {
-      triggerPopup("Error", "End date must be in the format dd-mm-yy", "Close");
-      return;
-    }
-
-    if (
-      (dateStart.trim() !== "" && dateStart == dateEnd) ||
-      (dateEnd.trim() !== "" && dateStart == dateEnd)
-    ) {
-      triggerPopup("Error", "Dates must be at least one day apart", "Close");
-      return;
-    }
-
-    try {
-      const startDateUnix = convertToUnix(dateStart);
-      const endDateUnix = convertToUnix(dateEnd);
-
-      const data = await getActivityLog(startDateUnix, endDateUnix);
-      setItems(data);
-      console.log("Test");
-      console.log(startDateUnix);
-    } catch (error) {
-      console.error("Error fetching test activity log:", error);
-    }
+    const startDateD = new Date(startDate);
+    const endDateD = new Date(endDate);
+    const startDateTS = Math.floor(startDateD.getTime() / 1000);
+    const endDateTS = Math.floor(endDateD.getTime() / 1000);
+    getActivityLog(startDateTS, endDateTS)
+      .then((data) => {
+        if (data.code === 200) {
+          console.log(data.data);
+          setCustomRangeNotifications(data.data);
+        } else {
+          triggerPopup(
+            "Unable to get notifications",
+            "An error occurred fetching notifications for given date range. Please try again",
+          );
+        }
+      })
+      .catch((error) => {
+        triggerPopup(
+          "Unable to get notifications",
+          "An error occurred fetching notifications for given date range. Please try again",
+        );
+      });
   };
 
-  const addActivity = () => {
-    setState(!addButtonState);
-    setOverlay(!overlayState);
-    return;
+  const handleSave = () => {
+    if (!action) {
+      triggerPopup(
+        "You need to fill out an action",
+        "You need to enter a action to be added ",
+      );
+    }
+    if (!uid) {
+      logActionNoUID(action)
+        .then((data) => {
+          if (data.code === 200) {
+            triggerPopup(
+              "Action saved",
+              "Your action has been saved",
+              "Okay",
+              () => {
+                getTodayActivityLog();
+              },
+            );
+          } else {
+            triggerPopup(
+              "Action couldn't be saved",
+              "There was an issue saving your action. Please try again later.",
+            );
+          }
+        })
+        .catch((error) => {
+          triggerPopup(
+            "Action couldn't be saved",
+            "There was an issue saving your action. Please try again later.",
+          );
+        });
+    } else {
+      logAction(action, uid)
+        .then((data) => {
+          if (data.code === 200) {
+            triggerPopup("Action saved", "Your action has been saved");
+          } else {
+            triggerPopup(
+              "Action couldn't be saved",
+              "There was an issue saving your action. Please try again later.",
+            );
+          }
+        })
+        .catch((error) => {
+          triggerPopup(
+            "Action couldn't be saved",
+            "There was an issue saving your action. Please try again later.",
+          );
+        });
+    }
   };
 
   return (
     <ReportWrapper>
-      <Title>Report</Title>
-      <SubTitle>Generate Reports</SubTitle>
-      <AddActivityComponent
-        addButtonState={addButtonState}
-        addActivity={addActivity}
-        overlayState={overlayState}
-        updateTable={updateTable}
-      />
-      <InputWrapper>
-        <Form>
-          <label>
-            Start Date:
-            <input
-              type="text"
-              value={dateStart || ""}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </label>
-          <label>
-            End Date:
-            <input
-              type="text"
-              value={dateEnd || ""}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </label>
-        </Form>
-        <ButtonWrapper>
-          <Button width={"140px"} height={"40px"} onClick={updateTable}>
-            Generate
-          </Button>
-          <Button width={"140px"} height={"40px"} onClick={addActivity}>
-            Add Activity
-          </Button>
-        </ButtonWrapper>
-      </InputWrapper>
-      <TableWrapper>
-        <Table>
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>Action</th>
-              <th>Occured</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items &&
-              items.map((item) => (
-                <tr key={item.acitivtyID}>
-                  <Td>{item.uid}</Td>
-                  <Td>{item.action}</Td>
-                  <Td>{item.occuredAt}</Td>
+      <Title>Notifications</Title>
+      <SubTitle>View notifications and generate Reports</SubTitle>
+      <Title style={{ marginTop: "15px" }}>Notifications today</Title>
+      <NotificationsTodayWrapper>
+        <TableContainer>
+          <Table>
+            <thead>
+              <tr className="header">
+                <th className={"firstHeader"}>Notification</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {todayNotifications.map((notification) => (
+                <tr key={notification.activityID}>
+                  <td>
+                    {notification.uid === "System"
+                      ? "System"
+                      : "User ID " + notification.uid}
+                    : {notification.action}
+                  </td>
+                  <td>{formatDateToReadable(notification.occuredAt)}</td>
                 </tr>
               ))}
-          </tbody>
-        </Table>
-      </TableWrapper>
+            </tbody>
+          </Table>
+        </TableContainer>
+      </NotificationsTodayWrapper>
+      <Title>Manually add a notification/action</Title>
+      <DateFiltersWrapper>
+        <DateRange>
+          <SubTitle>User ID:</SubTitle>
+          <Input
+            margin={"0"}
+            placeholder={"User ID (Optional)"}
+            width={"250px"}
+            value={uid}
+            setValue={setUID}
+          ></Input>
+        </DateRange>
+        <DateRange>
+          <SubTitle>Action:</SubTitle>
+          <Input
+            margin={"0"}
+            placeholder={"Action"}
+            width={"400px"}
+            value={action}
+            setValue={setAction}
+          ></Input>
+        </DateRange>
+        <DateRange>
+          <SubTitle style={{ opacity: "0" }}>Placeholder</SubTitle>
+          <Button width={"250px"} height={"50px"} onClick={handleSave}>
+            Save Action
+          </Button>
+        </DateRange>
+      </DateFiltersWrapper>
+
+      <Title>Generate notifications report</Title>
+      <DateFiltersWrapper>
+        <DateRange>
+          <SubTitle>Start Date:</SubTitle>
+          <Input
+            type={"date"}
+            margin={"0"}
+            placeholder={"Start Date"}
+            width={"250px"}
+            value={startDate}
+            setValue={setStartDate}
+          ></Input>
+        </DateRange>
+        <DateRange>
+          <SubTitle>End Date:</SubTitle>
+          <Input
+            type={"date"}
+            margin={"0"}
+            placeholder={"End Date"}
+            width={"250px"}
+            value={endDate}
+            setValue={setEndDate}
+          ></Input>
+        </DateRange>
+        <DateRange>
+          <SubTitle style={{ opacity: "0" }}>Placeholder</SubTitle>
+          <Button width={"250px"} height={"50px"} onClick={handleGeneration}>
+            Generate
+          </Button>
+        </DateRange>
+      </DateFiltersWrapper>
+      {startDate === "" ? (
+        <SubTitle>Enter valid date ranges to continue</SubTitle>
+      ) : startDate !== "" &&
+        endDate !== "" &&
+        (!customRangeNotification || customRangeNotification.length === 0) ? (
+        <SubTitle>No notifications match your date range.</SubTitle>
+      ) : startDate !== "" &&
+        endDate !== "" &&
+        customRangeNotification &&
+        customRangeNotification.length > 0 ? (
+        <NotificationsTodayWrapper>
+          <TableContainer>
+            <Table>
+              <thead>
+                <tr className="header">
+                  <th className={"firstHeader"}>Notification</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {customRangeNotification.map((notification) => (
+                  <tr key={notification.activityID}>
+                    <td>
+                      {notification.uid === "System"
+                        ? "System"
+                        : "User ID " + notification.uid}
+                      : {notification.action}: {notification.action}
+                    </td>
+                    <td>{formatDateToReadable(notification.occuredAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableContainer>
+        </NotificationsTodayWrapper>
+      ) : null}
     </ReportWrapper>
   );
+}
+
+export function formatDateToReadable(inputDate) {
+  const date = new Date(inputDate);
+
+  const day = date.getDate();
+  const monthIndex = date.getMonth();
+  const year = date.getFullYear();
+  const hour = date.getHours();
+  const minutes = date.getMinutes();
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const daySuffix = getDaySuffix(day);
+  const formattedDate = `${day}${daySuffix}  ${months[monthIndex]}  ${year} at ${hour}:${minutes}`;
+  return `${formattedDate}`;
+}
+
+function getDaySuffix(day) {
+  if (day >= 11 && day <= 13) {
+    return "th";
+  }
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
 }

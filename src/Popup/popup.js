@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { usePopup } from "./popupContext";
 import Button from "../ReuseableComponents/Button";
 import { media } from "../Media";
+import WebFont from "webfontloader";
 
 const StyledPopup = styled.div`
   display: flex;
@@ -11,10 +12,11 @@ const StyledPopup = styled.div`
   align-items: center;
   text-align: center;
   position: fixed;
+  font-family: Rubik;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1000;
+  z-index: 3000;
   background-color: white;
   border-radius: 10px;
   width: 30%;
@@ -44,6 +46,14 @@ const Popup = () => {
     popupData.onButtonClick();
     clearPopup();
   };
+
+  useEffect(() => {
+    WebFont.load({
+      google: {
+        families: ["Rubik"],
+      },
+    });
+  }, []);
 
   const renderContent = () => {
     if (React.isValidElement(popupData.content)) {

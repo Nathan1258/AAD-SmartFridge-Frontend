@@ -115,7 +115,7 @@ const ExposureText = styled.p`
 `;
 
 const RotatableIcon = styled(FaCircleHalfStroke)`
-  transition: transform 0.1s ease-in-out;
+  transition: transform 0.3s ease-in-out;
   ${(props) =>
     props.rotate &&
     css`

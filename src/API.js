@@ -13,7 +13,7 @@ export const clockIn = (userNumber, password) => {
       .then((data) => {
         if (data.code !== 200)
           return reject(
-            "Your user number or password is wrong. Please try again."
+            "Your user number or password is wrong. Please try again.",
           );
         return resolve(data.data.accessPIN);
       })
@@ -34,7 +34,7 @@ export const getUserDetails = (accessPIN) => {
       .then((data) => {
         if (data.code !== 200)
           return reject(
-            "Your accessPIN is wrong or has expired. Please try again."
+            "Your accessPIN is wrong or has expired. Please try again.",
           );
         return resolve(data.data);
       })
@@ -141,7 +141,7 @@ export const getAllOrderedProducts = () => {
       .then((data) => {
         if (data.code !== 200)
           return reject(
-            "Your accessPIN is wrong or has expired. Please try again."
+            "Your accessPIN is wrong or has expired. Please try again.",
           );
         return resolve(data);
       })
@@ -495,7 +495,7 @@ export const getActivityLog = (dateStart, dateEnd) => {
       .then((response) => response.json())
       .then((data) => {
         if (data.code != 200) return reject("Could not get logs");
-        return resolve(data.data);
+        return resolve(data);
       })
       .catch((error) => reject(error.message));
   });
@@ -518,6 +518,26 @@ export const logAction = (action, uid) => {
       .then((data) => {
         if (data.code != 200) return reject("Could not get logs");
         return resolve(data.data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+export const logActionNoUID = (action) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/reports/log-action", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessPIN: getAccessPIN(),
+        action: action,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code != 200) return reject("Could not get logs");
+        return resolve(data);
       })
       .catch((error) => reject(error.message));
   });
