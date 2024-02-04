@@ -345,7 +345,7 @@ export const getAllItemsInStock = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data.code != 200) return reject("Could not get items");
-        return resolve(data.data);
+        return resolve(data);
       })
       .catch((error) => reject(error.message));
   });
