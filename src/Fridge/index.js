@@ -97,6 +97,7 @@ export function Fridge() {
               />,
               "Okay",
               async () => {
+                if (originalQuantity === quantityLocal) return;
                 if (originalQuantity > quantityLocal) {
                   await removeItem(
                     suggestion.itemID,
