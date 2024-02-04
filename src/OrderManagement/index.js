@@ -11,7 +11,7 @@ import {
   getExpiringProducts,
   getPastDeliveries,
   removeItemFromOrder,
-  setDeliveryIsChecked,
+  finaliseDelivery,
 } from "../API";
 import { MdEdit } from "react-icons/md";
 import { IoIosRemoveCircle } from "react-icons/io";
@@ -302,18 +302,19 @@ function PastDeliveries({
                     style={
                       delivery.status === "Delivered"
                         ? { color: "red", fontWeight: "bold" }
-                        : null
+                        : delivery.status === "Completed"
+                          ? {
+                              color: "green",
+                              fontWeight: "bold",
+                            }
+                          : null
                     }
                   >
                     {delivery.isDelivered === 1 && delivery.isChecked === 0
                       ? "Delivered - Action required"
                       : delivery.status}
                   </td>
-                  <td>
-                    {delivery.isDelivered && delivery.isChecked === 0
-                      ? "Yes"
-                      : "No"}
-                  </td>
+                  <td>{delivery.isDelivered === 1 ? "Yes" : "No"}</td>
                 </tr>
               ))}
             </tbody>
@@ -324,7 +325,12 @@ function PastDeliveries({
   );
 }
 
-function ItemsInOrder({ itemsInDelivery, isLoading, setButtonDisabled }) {
+function ItemsInOrder({
+  itemsInDelivery,
+  isLoading,
+  setButtonDisabled,
+  delivery,
+}) {
   const checkAllBoxesChecked = () => {
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const allChecked = Array.from(checkboxes).every(
@@ -349,7 +355,15 @@ function ItemsInOrder({ itemsInDelivery, isLoading, setButtonDisabled }) {
   return (
     <>
       {isLoading ? (
-        <Loading>Fetching items...</Loading>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <Loading>Fetching items...</Loading>
+        </div>
       ) : (
         <TableContainer>
           <Table>
@@ -358,7 +372,12 @@ function ItemsInOrder({ itemsInDelivery, isLoading, setButtonDisabled }) {
                 <th className={"firstHeader"}>Product Name</th>
                 <th>Quantity</th>
                 <th>Status</th>
-                <th>Correct</th>
+                {delivery.orderID === parseInt(getOrder()[0] + getOrder()[1]) ||
+                delivery.status === "Completed" ? (
+                  <></>
+                ) : (
+                  <th>Correct</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -375,9 +394,15 @@ function ItemsInOrder({ itemsInDelivery, isLoading, setButtonDisabled }) {
                   >
                     {item.status}
                   </td>
-                  <td>
-                    <input type={"checkbox"}></input>
-                  </td>
+                  {delivery.orderID ===
+                    parseInt(getOrder()[0] + getOrder()[1]) ||
+                  delivery.status === "Completed" ? (
+                    <></>
+                  ) : (
+                    <td>
+                      <input type={"checkbox"}></input>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -464,20 +489,55 @@ function Delivery({ delivery, triggerPopup }) {
         ) : (
           <></>
         )}
+        {delivery.status === "Completed" ? (
+          <Body style={{ color: "green" }}>
+            This delivery has been completed
+          </Body>
+        ) : (
+          <></>
+        )}
         <ItemsInOrder
           itemsInDelivery={itemsInDelivery}
           isLoading={isItemsInDeliveryLoading}
           setButtonDisabled={setButtonDisabled}
+          delivery={delivery}
         />
-        <Button
-          backgroundcolor={"black"}
-          color={"white"}
-          width={"150px"}
-          isDisabled={buttonDisabled}
-          onClick={setDeliveryIsChecked}
-        >
-          Submit
-        </Button>
+        {delivery.orderID === parseInt(getOrder()[0] + getOrder()[1]) ||
+        delivery.status === "Completed" ? (
+          <></>
+        ) : (
+          <Button
+            backgroundcolor={"black"}
+            color={"white"}
+            width={"150px"}
+            isDisabled={buttonDisabled}
+            onClick={() => {
+              finaliseDelivery(524).then((data) => {
+                if (data.code === 200) {
+                  triggerPopup(
+                    "Order finalised",
+                    "Order has been finalised an items have been added to the inventory",
+                    "Okay",
+                    () => {
+                      window.location.reload();
+                    },
+                  );
+                } else {
+                  triggerPopup(
+                    "Unable to finalise order",
+                    "The order was unable to be finalised. Please try again later",
+                    "Okay",
+                    () => {
+                      window.location.reload();
+                    },
+                  );
+                }
+              });
+            }}
+          >
+            Submit
+          </Button>
+        )}
       </DeliveryWrapper>
     </>
   );
@@ -524,8 +584,8 @@ export function OrderManagement(props) {
       })
       .catch((error) => {
         triggerPopup(
-          "There was an error fetching past deliveries",
-          "We ran into an error fetching past deliveries. Please try again soon",
+          "There was an error fetching deliveries",
+          "We ran into an error fetching deliveries. Please try again soon",
           "Okay",
           () => {
             window.location.reload();
@@ -583,9 +643,14 @@ export function OrderManagement(props) {
 
   const handleDeliveryClick = (delivery) => {
     triggerPopup(
-      `Delivery for week ${delivery.orderID.toString().charAt(0)}`,
+      delivery.orderID === parseInt(getOrder()[0] + getOrder()[1])
+        ? "Delivery due to be ordered this week"
+        : `Delivery for week ${delivery.orderID.toString().charAt(0)}`,
       <Delivery delivery={delivery} triggerPopup={triggerPopup} />,
-      "null",
+      delivery.orderID === parseInt(getOrder()[0] + getOrder()[1]) ||
+        delivery.status === "Completed"
+        ? "Okay"
+        : "null",
     );
   };
 
@@ -609,14 +674,22 @@ export function OrderManagement(props) {
         getOrderedProducts={getOrderedProducts}
       />
       <SubTitle>Total cost of this order: £{totalCost}</SubTitle>
-      <Title style={{ marginTop: "10px" }}>Past deliveries</Title>
-      <PastDeliveries
-        pastDeliveries={pastDeliveries}
-        isLoading={isPastDeliveriesLoading}
-        triggerPopup={triggerPopup}
-        getPastDeliveries={getPastDeliveries}
-        handleDeliveryClick={handleDeliveryClick}
-      ></PastDeliveries>
+      <Title style={{ marginTop: "10px" }}>Deliveries</Title>
+      {pastDeliveries.length <= 0 ? (
+        <SubTitle
+          style={{ marginTop: "10px", fontWeight: "bold", fontSize: "1.5rem" }}
+        >
+          No deliveries to show
+        </SubTitle>
+      ) : (
+        <PastDeliveries
+          pastDeliveries={pastDeliveries}
+          isLoading={isPastDeliveriesLoading}
+          triggerPopup={triggerPopup}
+          getPastDeliveries={getPastDeliveries}
+          handleDeliveryClick={handleDeliveryClick}
+        ></PastDeliveries>
+      )}
     </OrderManagementWrapper>
   );
 }
@@ -627,7 +700,7 @@ function getOrder() {
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
-  return [weekNo, d.getUTCFullYear()];
+  return [weekNo, d.getUTCFullYear().toString().substr(-2)];
 }
 
 function formatDateToReadable(inputDate) {
