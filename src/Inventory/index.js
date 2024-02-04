@@ -91,7 +91,7 @@ function itemsTable(
   sortOrder,
   handleHeaderClick,
   isLoading,
-  selectedView,
+  selectedView
 ) {
   return (
     <>
@@ -212,7 +212,7 @@ export function Inventory(props) {
             "Okay",
             () => {
               window.location.reload();
-            },
+            }
           );
         });
     } else if (selectedView === "Items in stock") {
@@ -229,7 +229,7 @@ export function Inventory(props) {
             "Okay",
             () => {
               window.location.reload();
-            },
+            }
           );
         });
     }
@@ -240,7 +240,7 @@ export function Inventory(props) {
   }, []);
   useEffect(() => {
     const filtered = items.filter((item) =>
-      item.Name.toLowerCase().includes(productSearchQuery.toLowerCase()),
+      item.Name.toLowerCase().includes(productSearchQuery.toLowerCase())
     );
     // Sort by Product Name
     const sortedByName = [...filtered].sort((a, b) => {
@@ -259,7 +259,7 @@ export function Inventory(props) {
     });
 
     setFilteredItems(
-      lastClickedHeader === "name" ? sortedByName : sortedByPrice,
+      lastClickedHeader === "name" ? sortedByName : sortedByPrice
     );
   }, [productSearchQuery, items, sortOrder, selectedView]);
   const toggleSortOrder = () => {
@@ -301,14 +301,14 @@ export function Inventory(props) {
           sortOrder,
           handleHeaderClick,
           isLoading,
-          selectedView,
+          selectedView
         )}
       </MainContent>
     </InventoryWrapper>
   );
 }
 
-function formatDateToReadable(inputDate) {
+export function formatDateToReadable(inputDate) {
   const date = new Date(inputDate);
 
   const day = date.getDate();

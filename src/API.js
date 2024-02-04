@@ -433,3 +433,48 @@ export const getAllDeliveries = () => {
       .catch((error) => reject(error.message));
   });
 };
+
+export const insertItem = (itemID, quantity, expiryDate) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/items/insert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessPIN: getAccessPIN(),
+        itemID: itemID,
+        quantity: quantity,
+        expiryDate: expiryDate,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code != 200) return reject("Couldn't Add Items");
+        return resolve(data.data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
+export const removeItem = (itemID, quantity) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/items/remove", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessPIN: getAccessPIN(),
+        itemID: itemID,
+        quantity: quantity,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code != 200) return reject("Couldn't Add Items");
+        return resolve(data.data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
