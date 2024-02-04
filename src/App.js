@@ -24,6 +24,7 @@ import { Fridge } from "./Fridge";
 import { Admin } from "./Admin";
 import { Expiring } from "./Expiring";
 import { OrderManagement } from "./OrderManagement";
+import { Delivery } from "./Delivery";
 
 const AppContainer = styled.div`
   display: flex;
@@ -118,10 +119,15 @@ function App() {
           <Popup />
           <Router>
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/clock-in" element={<ClockIn />} />
               <Route
-                path="*"
+                path="/"
+                element={<Navigate to="/app/dashboard" replace />}
+              />
+              <Route path="/clock-in" element={<ClockIn />} />
+              <Route path="/delivery" element={<Delivery />} />
+              <Route path="*" element={<NoMatch />} />
+              <Route
+                path="/app/*"
                 element={
                   <>
                     <Redirect />

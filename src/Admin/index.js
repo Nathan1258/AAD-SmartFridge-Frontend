@@ -210,7 +210,7 @@ export function Admin(props) {
         "You do not have the right access to visit this page. Please contact your admin or head chef",
         "Okay",
         () => {
-          navigate("/dashboard");
+          navigate("/app/dashboard");
         },
       );
     }
@@ -234,7 +234,7 @@ export function Admin(props) {
           "We ran into an error fetching all users. You may not have access to this page. Please refresh the page and try again.",
           "Okay",
           () => {
-            navigate("/dashboard");
+            navigate("/app/dashboard");
           },
         );
       });

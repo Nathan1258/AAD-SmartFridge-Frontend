@@ -93,7 +93,7 @@ export function NavBar(props) {
     navigate("/clock-in");
   };
   const report = () => {
-    navigate("/report");
+    navigate("/app/report");
   };
 
   return (

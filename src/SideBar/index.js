@@ -82,42 +82,42 @@ export function SideBar(props) {
       </UserBox>
       <NavigationLinks>
         <SideBarLink
-          current={location.pathname === "/dashboard"}
-          onClick={() => handleClick("/dashboard")}
+          current={location.pathname === "/app/dashboard"}
+          onClick={() => handleClick("/app/dashboard")}
         >
           Dashboard
         </SideBarLink>
         <SideBarLink
-          current={location.pathname === "/inventory"}
-          onClick={() => handleClick("/inventory")}
+          current={location.pathname === "/app/inventory"}
+          onClick={() => handleClick("/app/inventory")}
         >
           Inventory
         </SideBarLink>
         <SideBarLink
-          current={location.pathname === "/fridge"}
-          onClick={() => handleClick("/fridge")}
+          current={location.pathname === "/app/fridge"}
+          onClick={() => handleClick("/app/fridge")}
         >
           Access Fridge
         </SideBarLink>
         {access.toLowerCase() === "admin" && (
           <>
             <SideBarLink
-              current={location.pathname === "/order-management"}
-              onClick={() => handleClick("/order-management")}
+              current={location.pathname === "/app/order-management"}
+              onClick={() => handleClick("/app/order-management")}
             >
               Order Management
             </SideBarLink>
             <SideBarLink
               access={access}
-              current={location.pathname === "/expiring"}
-              onClick={() => handleClick("/expiring")}
+              current={location.pathname === "/app/expiring"}
+              onClick={() => handleClick("/app/expiring")}
             >
               Expiring items
             </SideBarLink>
             <SideBarLink
               access={access}
-              current={location.pathname === "/admin"}
-              onClick={() => handleClick("/admin")}
+              current={location.pathname === "/app/admin"}
+              onClick={() => handleClick("/app/admin")}
             >
               Admin tools
             </SideBarLink>

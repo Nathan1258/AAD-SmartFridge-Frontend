@@ -35,3 +35,14 @@ export const getAccessPIN = () => {
   }
   return null;
 };
+
+export const getAccessCode = () => {
+  const cookies = document.cookie.split(";");
+  for (const cookie of cookies) {
+    const [cookieName, cookieValue] = cookie.trim().split("=");
+    if (cookieName === "accessCode") {
+      return cookieValue;
+    }
+  }
+  return null;
+};

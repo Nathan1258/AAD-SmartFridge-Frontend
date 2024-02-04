@@ -10,6 +10,8 @@ const StyledButton = styled.button`
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
+  box-shadow: ${(props) =>
+    props.shadow ? "0px 4px 8px rgba(0, 0, 0, 0.5)" : "none"};
   margin: 5px;
   width: ${(props) => props.width || "auto"};
   height: ${(props) => props.height || "auto"};
@@ -24,6 +26,13 @@ const StyledButton = styled.button`
     transition: transform 250ms;
     transform: scale(1);
   }
+
+  &:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
 `;
 
 const Button = ({
@@ -33,6 +42,8 @@ const Button = ({
   height,
   color,
   backgroundcolor,
+  isDisabled = false,
+  shadow = false,
   margin,
 }) => {
   return (
@@ -43,6 +54,9 @@ const Button = ({
       color={color}
       backgroundcolor={backgroundcolor}
       margin={margin}
+      shadow={shadow}
+      disabled={isDisabled}
+      isDisabled={isDisabled}
     >
       {children}
     </StyledButton>
