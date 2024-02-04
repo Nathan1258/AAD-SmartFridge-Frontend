@@ -141,7 +141,7 @@ export const getAllOrderedProducts = () => {
       .then((data) => {
         if (data.code !== 200)
           return reject(
-            "Your accessPIN is wrong or has expired. Please try again.",
+            "Your accessPIN is wrong or has expired. Please try again."
           );
         return resolve(data);
       })
@@ -473,6 +473,50 @@ export const removeItem = (itemID, quantity) => {
       .then((response) => response.json())
       .then((data) => {
         if (data.code != 200) return reject("Couldn't Add Items");
+        return resolve(data.data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
+export const getActivityLog = (dateStart, dateEnd) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/reports/fetch/logs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessPIN: getAccessPIN(),
+        dateStart: dateStart,
+        dateEnd: dateEnd,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code != 200) return reject("Could not get logs");
+        return resolve(data.data);
+      })
+      .catch((error) => reject(error.message));
+  });
+};
+
+export const logAction = (action, uid) => {
+  return new Promise((resolve, reject) => {
+    fetch("https://aad-api.ellisn.com/v1/reports/log-action", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessPIN: getAccessPIN(),
+        action: action,
+        uid: uid,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.code != 200) return reject("Could not get logs");
         return resolve(data.data);
       })
       .catch((error) => reject(error.message));

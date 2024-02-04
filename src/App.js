@@ -26,6 +26,7 @@ import { Expiring } from "./Expiring";
 import { OrderManagement } from "./OrderManagement";
 import { Delivery } from "./Delivery";
 import { useState } from "react";
+import { Report } from "./Report";
 
 const AppContainer = styled.div`
   display: flex;
@@ -147,6 +148,7 @@ function App() {
                           <Route path="/dashboard" element={<Dashboard />} />
                           <Route path="/inventory" element={<Inventory />} />
                           <Route path="/fridge" element={<Fridge />} />
+                          <Route path="/report" element={<Report />} />
                           <Route path="/admin" element={<Admin />} />
                           <Route path="/expiring" element={<Expiring />} />
                           <Route
