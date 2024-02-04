@@ -4,13 +4,13 @@ import { getActivityLog, logAction, logActionNoUID } from "../API";
 import Button from "../ReuseableComponents/Button";
 import { Popup, PopupProvider } from "../Popup/popup";
 import { usePopup } from "../Popup/popupContext";
-import DropdownSelector from "../ReuseableComponents/DropdownSelector";
 import Input from "../ReuseableComponents/Input";
 
 const ReportWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-height: 100vh;
   margin: 0;
 `;
 
