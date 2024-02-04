@@ -57,7 +57,7 @@ export function Dashboard(props) {
           width={"330px"}
           height={"220px"}
           color={"white"}
-          page={"/fridge"}
+          page={"/app/fridge"}
         >
           <h1>Access Fridge</h1>
           <Image src={photo}></Image>
@@ -65,12 +65,12 @@ export function Dashboard(props) {
         <DashboardCard
           width={"330px"}
           height={"220px"}
-          page={"/order-management"}
+          page={"/app/order-management"}
         >
           <h1>Order Management</h1>
           <Image src={photo}></Image>
         </DashboardCard>
-        <DashboardCard width={"330px"} height={"220px"} page={"/report"}>
+        <DashboardCard width={"330px"} height={"220px"} page={"/app/report"}>
           <h1>Report</h1>
           <Image src={photo}></Image>
         </DashboardCard>
