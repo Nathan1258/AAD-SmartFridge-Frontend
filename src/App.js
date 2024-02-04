@@ -47,7 +47,10 @@ const NavBarContainer = styled.div`
   left: 0;
   right: 0;
   height: 10%;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: ${(props) =>
+    props.isBackgroundChanged
+      ? "0px 0px 10px rgba(255, 255, 255, 0.5)"
+      : "0px 0px 10px rgba(0, 0, 0, 0.5)"};
 `;
 
 const SideBarAndContentContainer = styled.div`
@@ -111,7 +114,11 @@ const Redirect = () => {
 };
 
 function App() {
-  const [isBackgroundChanged, setBackgroundChanged] = useState(false);
+  const [isBackgroundChanged, setBackgroundChanged] = useState(() => {
+    const saved = localStorage.getItem("isBackgroundChanged");
+    return saved !== null ? saved === "true" : false;
+  });
+
   useEffect(() => {
     WebFont.load({
       google: {
@@ -120,9 +127,14 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("isBackgroundChanged", isBackgroundChanged);
+  }, [isBackgroundChanged]);
+
   const handleBackgroundChange = () => {
     setBackgroundChanged(!isBackgroundChanged);
   };
+
   return (
     <PopupProvider>
       <UserProvider>

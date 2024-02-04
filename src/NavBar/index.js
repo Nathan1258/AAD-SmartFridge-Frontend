@@ -4,7 +4,7 @@ import { IoIosNotifications } from "react-icons/io";
 import { FaCircleHalfStroke } from "react-icons/fa6";
 import { useUser } from "../UserContext";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppContainer from "../App";
 
 const NavBarWrapper = styled.div`
@@ -115,7 +115,8 @@ const ExposureText = styled.p`
 `;
 
 export function NavBar({ onBackgroundChange }) {
-  const { resetUserData } = useUser();
+  const { userData, resetUserData } = useUser();
+  const [canAccess, setCanAccess] = useState(false);
   const navigate = useNavigate();
 
   const backgroundChange = () => {
@@ -131,6 +132,12 @@ export function NavBar({ onBackgroundChange }) {
     navigate("/app/report");
   };
 
+  useEffect(() => {
+    if (userData) {
+      setCanAccess(userData.access === "admin");
+    }
+  }, [userData]);
+
   return (
     <NavBarWrapper>
       <NavTitle>
@@ -142,10 +149,14 @@ export function NavBar({ onBackgroundChange }) {
           <FaCircleHalfStroke color="white" opacity={0.8} size={25} />
           <ExposureText>Exposure</ExposureText>
         </ExposureWrapper>
-        <NotificationsWrapper onClick={report}>
-          <IoIosNotifications color="white" opacity={0.8} size={25} />
-          <NotificationsText>Notifications</NotificationsText>
-        </NotificationsWrapper>
+        {canAccess ? (
+          <NotificationsWrapper onClick={report}>
+            <IoIosNotifications color="white" opacity={0.8} size={25} />
+            <NotificationsText>Notifications</NotificationsText>
+          </NotificationsWrapper>
+        ) : (
+          <></>
+        )}
         <LogoutWrapper onClick={logout}>
           <IoLogOut color="white" opacity={0.8} size={25} />
           <LogoutText>Logout</LogoutText>
