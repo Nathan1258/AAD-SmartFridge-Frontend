@@ -34,11 +34,27 @@ const AppContainer = styled.div`
   margin: 0;
   height: 100%;
   font-family: "Rubik";
-  background-color: ${(props) => (props.isBackgroundChanged ? "black" : "")};
-  background-image: ${(props) =>
-    props.isBackgroundChanged
-      ? ""
-      : "linear-gradient(#0b132b, #1c2541, #00194a, #3a506b)"};
+  background-color: ${(props) =>
+    props.isBackgroundChanged ? "black" : "#0b132b"};
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: linear-gradient(#0b132b, #1c2541, #00194a, #3a506b);
+    transition: opacity 0.5s ease-in-out;
+    opacity: ${(props) => (props.isBackgroundChanged ? 0 : 1)};
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 `;
 
 const NavBarContainer = styled.div`

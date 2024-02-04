@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { IoLogOut } from "react-icons/io5";
 import { IoIosNotifications } from "react-icons/io";
 import { FaCircleHalfStroke } from "react-icons/fa6";
@@ -114,13 +114,24 @@ const ExposureText = styled.p`
   color: white;
 `;
 
+const RotatableIcon = styled(FaCircleHalfStroke)`
+  transition: transform 0.1s ease-in-out;
+  ${(props) =>
+    props.rotate &&
+    css`
+      transform: rotate(180deg);
+    `}
+`;
+
 export function NavBar({ onBackgroundChange }) {
   const { userData, resetUserData } = useUser();
   const [canAccess, setCanAccess] = useState(false);
+  const [isBackgroundChanged, setIsBackgroundChanged] = useState(false);
   const navigate = useNavigate();
 
   const backgroundChange = () => {
     onBackgroundChange();
+    setIsBackgroundChanged(!isBackgroundChanged);
   };
 
   const logout = () => {
@@ -146,8 +157,13 @@ export function NavBar({ onBackgroundChange }) {
       </NavTitle>
       <NavButtonsWrapper>
         <ExposureWrapper onClick={backgroundChange}>
-          <FaCircleHalfStroke color="white" opacity={0.8} size={25} />
-          <ExposureText>Exposure</ExposureText>
+          <RotatableIcon
+            rotate={isBackgroundChanged}
+            color="white"
+            opacity={0.8}
+            size={25}
+          />
+          <ExposureText>Theme</ExposureText>
         </ExposureWrapper>
         {canAccess ? (
           <NotificationsWrapper onClick={report}>
