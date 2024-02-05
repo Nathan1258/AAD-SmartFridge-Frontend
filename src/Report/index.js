@@ -355,7 +355,7 @@ export function Report(props) {
                       {notification.uid === "System"
                         ? "System"
                         : "User ID " + notification.uid}
-                      : {notification.action}: {notification.action}
+                      : {notification.uid}: {notification.action}
                     </td>
                     <td>{formatDateToReadable(notification.occuredAt)}</td>
                   </tr>
