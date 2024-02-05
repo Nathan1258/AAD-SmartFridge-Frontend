@@ -373,7 +373,8 @@ function ItemsInOrder({
                 <th>Quantity</th>
                 <th>Status</th>
                 {delivery.orderID === parseInt(getOrder()[0] + getOrder()[1]) ||
-                delivery.status === "Completed" ? (
+                delivery.status === "Completed" ||
+                delivery.status === "Processed" ? (
                   <></>
                 ) : (
                   <th>Correct</th>
@@ -396,7 +397,8 @@ function ItemsInOrder({
                   </td>
                   {delivery.orderID ===
                     parseInt(getOrder()[0] + getOrder()[1]) ||
-                  delivery.status === "Completed" ? (
+                  delivery.status === "Completed" ||
+                  delivery.status === "Processed" ? (
                     <></>
                   ) : (
                     <td>
@@ -503,7 +505,8 @@ function Delivery({ delivery, triggerPopup }) {
           delivery={delivery}
         />
         {delivery.orderID === parseInt(getOrder()[0] + getOrder()[1]) ||
-        delivery.status === "Completed" ? (
+        delivery.status === "Completed" ||
+        delivery.status === "Processed" ? (
           <></>
         ) : (
           <Button
@@ -648,7 +651,8 @@ export function OrderManagement(props) {
         : `Delivery for week ${delivery.orderID.toString().charAt(0)}`,
       <Delivery delivery={delivery} triggerPopup={triggerPopup} />,
       delivery.orderID === parseInt(getOrder()[0] + getOrder()[1]) ||
-        delivery.status === "Completed"
+        delivery.status === "Completed" ||
+        delivery.status === "Processed"
         ? "Okay"
         : "null",
     );
